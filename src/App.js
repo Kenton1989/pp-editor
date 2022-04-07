@@ -1,5 +1,6 @@
 import "./App.css";
 import React, { useState } from "react";
+import { inputSaveFile } from "./save-file-io";
 
 function App() {
   const [text, setText] = useState("");
@@ -18,7 +19,8 @@ function App() {
         <button
           id="load"
           onClick={async () => {
-            setText(await inputTxtFile());
+            let saveData = await inputSaveFile();
+            setText(JSON.stringify(saveData, undefined, 4))
           }}
         >
           Load

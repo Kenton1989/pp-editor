@@ -1,4 +1,5 @@
-import version4ParseSave from "./parser-v4";
+import version4EncodeSave from "./v4-encode";
+import version4ParseSave from "./v4-parse";
 
 const MAX_SAVE_FILE_SIZE = 1 << 20;
 
@@ -49,10 +50,18 @@ async function inputTxtFile(maxSize = 1000) {
   });
 }
 
+export async function outputSaveFile(saveObj, filename = "level.txt") {
+  let encoded = version4EncodeSave(saveObj);
+  outputTxtFile(encoded, filename);
+}
+
 function outputTxtFile(text, filename = "text.txt") {
+  console.log("saving to:", filename)
   let a = document.createElement("a");
   let file = new Blob([text], { type: "text/plain" });
   a.href = URL.createObjectURL(file);
   a.download = filename;
   a.click();
 }
+
+

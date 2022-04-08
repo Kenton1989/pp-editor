@@ -1,6 +1,8 @@
 import "./App.css";
 import React, { useState } from "react";
-import { inputSaveFile } from "./save-file-io";
+import { inputSaveFile, outputSaveFile } from "./save-file-io";
+
+let saveData = {}
 
 function App() {
   const [text, setText] = useState("");
@@ -19,52 +21,30 @@ function App() {
         <button
           id="load"
           onClick={async () => {
-            let saveData = await inputSaveFile();
+            saveData = await inputSaveFile();
             setText(JSON.stringify(saveData, undefined, 4))
           }}
         >
           Load
         </button>
         <button id="save"
-          onClick={() => {
-            outputTxtFile(text);
+          onClick={async () => {
+            // await outputSaveFile(saveData);
+            await outputSaveFile({
+              blockType: "Root",
+              version: "4",
+              attemptOrder: ["enter", "eat", "push", "possess"],
+              shed: true,
+              innerPush: true,
+              drawStyle: "tui",
+              customLevelMusic: 2,
+              customLevelPalette: 9,
+              children: [],
+            });
           }}
         >Save</button>
       </p>
     </div>
   );
-}
-
-async function inputTxtFile(maxSize = 1000) {
-  let el = document.createElement("input");
-  el.type = "file";
-  el.accept = "text/plain";
-
-  return new Promise((resolve, reject) => {
-    el.onchange = (e) => {
-      e.preventDefault();
-      let file = e.target.files[0];
-      if (file.size > maxSize) {
-        reject(new Error("file size too large"));
-        return;
-      }
-
-      let reader = new FileReader();
-      reader.onload = async (e) => {
-        const text = e.target.result;
-        resolve(text);
-      };
-      reader.readAsText(file);
-    };
-    console.log("input");
-    el.click();
-  });
-}
-function outputTxtFile(text, filename="text.txt") {
-  let a = document.createElement("a");
-  let file = new Blob([text], { type: "text/plain" });
-  a.href = URL.createObjectURL(file);
-  a.download = filename;
-  a.click();
 }
 export default App;

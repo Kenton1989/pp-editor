@@ -1,21 +1,9 @@
-const DEFAULT_HEADER = {
-  blockType: "Root",
-  version: "4",
-  attemptOrder: ["push", "enter", "eat", "possess"],
-  shed: false,
-  innerPush: false,
-  drawStyle: "",
-  customLevelMusic: -1,
-  customLevelPalette: -1,
-};
-
-const ATTEMPT_NAMES = new Set(["push", "enter", "eat", "possess"]);
-const DRAW_STYLES = new Set(["", "tui", "grid", "oldstyle"]);
+import { ATTEMPT_NAMES, DEFAULT_HEADER, DRAW_STYLES } from "./v4-const";
 
 const HEADER_PARSE = {
   version: (tokens, headers) => (headers.version = tokens[1]),
   attempt_order: (tokens, headers) =>
-    (headers.attemptOrder = tokens.slice(1)),
+    (headers.attemptOrder = tokens[1].split(",")),
   shed: (tokens, headers) => (headers.shed = true),
   inner_push: (tokens, headers) => (headers.innerPush = true),
   draw_style: (tokens, headers) => (headers.drawStyle = tokens[1]),
@@ -37,11 +25,14 @@ const HEADER_CHECK = {
   custom_level_palette: (headers) => !isNaN(headers.customLevelPalette),
 };
 
-export default function version4ParseSave(txtData = "") {
+export default function parseSave(txtData = "") {
   let txtLines = txtData.split("\n").map((line) => line.trimEnd());
+  if (txtLines[txtLines.length - 1] === "") {
+    txtLines.pop();
+  }
   let tokenLines = txtLines.map((txtLine) => txtLine.split(" "));
 
-  let result = Object.assign({ children: [] }, DEFAULT_HEADER);
+  let result = Object.assign({}, DEFAULT_HEADER, { children: [] });
   let lineNo = 0;
   for (const tokens of tokenLines) {
     let headerKey = tokens[0];

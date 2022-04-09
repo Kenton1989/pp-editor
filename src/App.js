@@ -1,50 +1,31 @@
-import "./App.css";
 import React, { useState } from "react";
 import { inputSaveFile, outputSaveFile } from "./save-file-io";
+import { Layout, Menu, PageHeader } from "antd";
+import "./App.css";
 
-let saveData = {}
-
+const { SubMenu } = Menu;
+const { Header, Footer, Sider, Content } = Layout;
 function App() {
-  const [text, setText] = useState("");
+  // const [text, setText] = useState("");
   return (
-    <div className="App">
-      <textarea
-        name="txt"
-        id="txt"
-        cols="30"
-        rows="10"
-        placeholder="enter text here"
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-      ></textarea>
-      <p>
-        <button
-          id="load"
-          onClick={async () => {
-            saveData = await inputSaveFile();
-            setText(JSON.stringify(saveData, undefined, 4))
-          }}
-        >
-          Load
-        </button>
-        <button id="save"
-          onClick={async () => {
-            // await outputSaveFile(saveData);
-            await outputSaveFile({
-              blockType: "Root",
-              version: "4",
-              attemptOrder: ["enter", "eat", "push", "possess"],
-              shed: true,
-              innerPush: true,
-              drawStyle: "tui",
-              customLevelMusic: 2,
-              customLevelPalette: 9,
-              children: [],
-            });
-          }}
-        >Save</button>
-      </p>
-    </div>
+    <>
+      <Layout className="stretch-height">
+        <Header>
+          <div className="main-logo">
+            <img src="/logo192.png" alt="logo" />
+            <span>Parabox Editor</span>
+          </div>
+          <Menu theme="dark" mode="horizontal" selectable={false}>
+            <SubMenu key="file" title="File">
+              <Menu.Item key="new">New</Menu.Item>
+              <Menu.Item key="open">Open</Menu.Item>
+              <Menu.Item key="save">Save</Menu.Item>
+            </SubMenu>
+          </Menu>
+        </Header>
+        <Content className="stretch-height"></Content>
+      </Layout>
+    </>
   );
 }
 export default App;

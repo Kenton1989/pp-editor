@@ -1,0 +1,28 @@
+#root {
+  height: 100vh;
+}
+
+.stretch-height {
+  height: 100%;
+}
+
+.main-logo {
+  float: left;
+  
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  height: 100%;
+  padding: 8px 0 7px 0;
+  margin-right: 50px;
+}
+
+.main-logo img {
+  height: 100%;
+}
+.main-logo span {
+  font-size: x-large;
+  color: lightgray;
+}

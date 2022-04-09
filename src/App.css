@@ -8,7 +8,7 @@
 
 .main-logo {
   float: left;
-  
+
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -25,4 +25,9 @@
 .main-logo span {
   font-size: x-large;
   color: lightgray;
+}
+
+.action-item-shortcut {
+  float: right;
+  opacity: 0.6;
 }

@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import { inputSaveFile, outputSaveFile } from "./save-file-io";
 import { Layout, Menu, PageHeader } from "antd";
 import MenuBar from "./components/menubar";
+import MapEditor from "./components/map-editor";
+import BrushMenu from "./components/brush-menu";
+import BlockState from "./components/block-state";
+
 import "./App.css";
 
 const { SubMenu } = Menu;
@@ -20,7 +24,11 @@ function App() {
           </div>
           <MenuBar onItemTriggered={(key) => console.log(key)} />
         </Header>
-        <Content className="stretch-height"></Content>
+        <Content className="main-div">
+          <MapEditor />
+          <BrushMenu />
+          <BlockState />
+        </Content>
       </Layout>
     </>
   );

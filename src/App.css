@@ -6,28 +6,28 @@
   height: 100%;
 }
 
-.main-logo {
-  float: left;
-
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-
-  height: 100%;
-  padding: 8px 0 7px 0;
-  margin-right: 50px;
+main {
+  display: flex;
+  align-items: stretch;
 }
 
-.main-logo img {
+.block-state {
+  display: inline-block;
+  border: 1px solid black;
+  width: 20vw;
   height: 100%;
 }
-.main-logo span {
-  font-size: x-large;
-  color: lightgray;
+
+.brush-menu {
+  display: inline-block;
+  border: 1px solid black;
+  width: 20vw;
+  height: 100%;
 }
 
-.action-item-shortcut {
-  float: right;
-  opacity: 0.6;
+.map-editor {
+  display: inline-block;
+  border: 1px solid black;
+  width: 60vw;
+  height: 100%;
 }

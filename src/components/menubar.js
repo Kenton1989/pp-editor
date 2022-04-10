@@ -1,5 +1,6 @@
 import { Menu } from "antd";
 import Hotkeys from "react-hot-keys";
+import "./menubar.css"
 
 const { SubMenu } = Menu;
 

@@ -2,8 +2,8 @@ import { DEFAULT_ATTEMPT_ORDER, DEFAULT_HEADER } from "./v4-const";
 
 export default function encodeSave(saveObj) {
   let header = encodeHeader(saveObj);
-  console.log(saveObj, header)
-  return header;
+  let body = encodeBody(saveObj);
+  return header + body;
 }
 
 const ENCODE_HEADER_LINES = [
@@ -38,6 +38,52 @@ function encodeHeader(headers = DEFAULT_HEADER) {
   }
   res += "#\n";
   return res;
+}
+
+const ENCODE_BODY_LINE = {
+  Block: (blk) =>
+    `Block ${blk.x} ${blk.y} ${blk.id} ${blk.width} ${blk.height} ${blk.hue} ${
+      blk.sat
+    } ${blk.val} ${blk.zoomFactor} ${Number(blk.fillWithWalls)} ${Number(
+      blk.player
+    )} ${Number(blk.possessable)} ${blk.playerOrder} ${Number(
+      blk.flipH
+    )} ${Number(blk.floatInSpace)} ${Number(blk.specialEffect)}`,
+  Ref: (ref) =>
+    `Ref ${ref.x} ${ref.y} ${ref.id} ${Number(ref.exitBlock)} ${Number(
+      ref.infExit
+    )} ${ref.infExitNum} ${Number(ref.infEnter)} ${ref.infEnterNum} ${
+      ref.infEnterId
+    } ${Number(ref.player)} ${Number(ref.possessable)} ${
+      ref.playerOrder
+    } ${Number(ref.flipH)} ${Number(ref.floatInSpace)} ${ref.specialEffect}`,
+  Wall: (wall) =>
+    `Wall ${wall.x} ${wall.y} ${Number(wall.player)} ${Number(
+      wall.possessable
+    )} ${wall.playerOrder}`,
+  Floor: (floor) => `Floor ${floor.x} ${floor.y} ${floor.floorType}`,
+};
+
+function encodeBody(root) {
+  let lines = encodeBodyImpl(root.children, 0, []);
+  lines.push("");
+  return lines.join("\n");
+}
+
+function encodeBodyImpl(children, level, lines) {
+  for (const node of children) {
+    const encode = ENCODE_BODY_LINE[node.blockType];
+    if (encode === undefined) {
+      throw new TypeError("unknown block type: " + node.blockType);
+    }
+
+    lines.push(`${"\t".repeat(level)}${encode(node)}`);
+
+    if (node.blockType === "Block") {
+      encodeBodyImpl(node.children, level + 1, lines);
+    }
+  }
+  return lines;
 }
 
 function arrEq(arr1, arr2) {

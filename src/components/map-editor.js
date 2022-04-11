@@ -1,6 +1,6 @@
 import { Button, Input } from "antd";
 import { useState } from "react";
-import { inputSaveFile, outputSaveFile } from "../save-file-io";
+import { inputSaveFile, outputSaveFile } from "../game-save-file";
 import "./map-editor.css";
 
 export default function MapEditor(props) {

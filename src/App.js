@@ -3,7 +3,7 @@ import { Layout, Menu, PageHeader } from "antd";
 import MenuBar from "./components/menubar";
 import MapEditor from "./components/map-editor";
 import BrushMenu from "./components/brush-menu";
-import BlockState from "./components/block-state";
+import PropertyEditor from "./components/property-editor";
 
 import "./App.css";
 
@@ -26,7 +26,7 @@ function App() {
         <Content className="main-div">
           <MapEditor />
           <BrushMenu />
-          <BlockState />
+          <PropertyEditor />
         </Content>
       </Layout>
     </>

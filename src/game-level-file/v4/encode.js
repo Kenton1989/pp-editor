@@ -1,8 +1,8 @@
-import { DEFAULT_ATTEMPT_ORDER, DEFAULT_HEADER } from "./v4-const";
+import { DEFAULT_ATTEMPT_ORDER, DEFAULT_HEADER } from "./const";
 
-export default function encodeSave(saveObj) {
-  let header = encodeHeader(saveObj);
-  let body = encodeBody(saveObj);
+export default function encodeLevel(levelObj) {
+  let header = encodeHeader(levelObj);
+  let body = encodeBody(levelObj);
   return header + body;
 }
 

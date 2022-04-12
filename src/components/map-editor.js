@@ -1,6 +1,6 @@
 import { Button, Input } from "antd";
 import { useState } from "react";
-import { inputSaveFile, outputSaveFile } from "../game-save-file";
+import { inputLevelFile, outputLevelFile } from "../game-level-file";
 import "./map-editor.css";
 
 export default function MapEditor(props) {
@@ -12,7 +12,7 @@ export default function MapEditor(props) {
       <Button
         onClick={async () => {
           try {
-            let save = await inputSaveFile();
+            let save = await inputLevelFile();
             setTxt(JSON.stringify(save, undefined, 4));
           } catch (e) {
             console.error(e);
@@ -25,7 +25,7 @@ export default function MapEditor(props) {
         onClick={async () => {
           try {
             let save = JSON.parse(txt);
-            await outputSaveFile(save);
+            await outputLevelFile(save);
           } catch (e) {
             console.error(e);
           }

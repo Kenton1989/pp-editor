@@ -1,15 +1,14 @@
-import version4EncodeSave from "./v4-encode";
-import version4ParseSave from "./v4-parse";
+import v4 from "./v4"
 
-const MAX_SAVE_FILE_SIZE = 1 << 20;
+const MAX_LEVEL_FILE_SIZE = 1 << 20;
 
-export async function inputSaveFile() {
-  let content = await inputTxtFile(MAX_SAVE_FILE_SIZE);
-  let save = parseSave(content);
-  return save;
+export async function inputLevelFile() {
+  let content = await inputTxtFile(MAX_LEVEL_FILE_SIZE);
+  let level = parseLevel(content);
+  return level;
 }
 
-function parseSave(txtData = "") {
+function parseLevel(txtData = "") {
   let versionLine = txtData.slice(0, txtData.indexOf("\n"));
   let [versionKey, version] = versionLine.trim().split(" ");
 
@@ -18,9 +17,9 @@ function parseSave(txtData = "") {
   }
 
   if (version === "4") {
-    return version4ParseSave(txtData);
+    return v4.parseLevel(txtData);
   } else {
-    throw new Error(`unknown version of save data: "${version}"`);
+    throw new Error(`unknown version of level data: "${version}"`);
   }
 }
 
@@ -50,8 +49,8 @@ async function inputTxtFile(maxSize = 1000) {
   });
 }
 
-export async function outputSaveFile(saveObj, filename = "level.txt") {
-  let encoded = version4EncodeSave(saveObj);
+export async function outputLevelFile(levelObj, filename = "level.txt") {
+  let encoded = v4.encodeLevel(levelObj);
   outputTxtFile(encoded, filename);
 }
 

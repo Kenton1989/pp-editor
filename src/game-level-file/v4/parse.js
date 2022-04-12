@@ -1,11 +1,11 @@
-import { ATTEMPT_NAMES, DEFAULT_HEADER, DRAW_STYLES } from "./v4-const";
+import { ATTEMPT_NAMES, DEFAULT_HEADER, DRAW_STYLES } from "./const";
 
 const HEADER_PARSE = {
   version: (tokens, headers) => (headers.version = tokens[1]),
   attempt_order: (tokens, headers) =>
     (headers.attemptOrder = tokens[1].split(",")),
-  shed: (tokens, headers) => (headers.shed = true),
-  inner_push: (tokens, headers) => (headers.innerPush = true),
+  shed: (tokens, headers) => (headers.shed = tokens[1] === "1"),
+  inner_push: (tokens, headers) => (headers.innerPush = tokens[1] === "1"),
   draw_style: (tokens, headers) => (headers.drawStyle = tokens[1]),
   custom_level_music: (tokens, headers) =>
     (headers.customLevelMusic = parseInt(tokens[1])),
@@ -25,7 +25,7 @@ const HEADER_CHECK = {
   custom_level_palette: (headers) => !isNaN(headers.customLevelPalette),
 };
 
-export default function parseSave(txtData = "") {
+export default function parseLevel(txtData = "") {
   let txtLines = txtData.split("\n").map((line) => line.trimEnd());
   if (txtLines[txtLines.length - 1] === "") {
     txtLines.pop();
@@ -116,7 +116,7 @@ const PARSE_BLOCK = {
 };
 
 /**
- * parse a block/node from the body part of save
+ * parse a block/node from the body part of level
  *
  * @param {any} parent parent element
  * @param {number} depth the depth of the recursive call of parseBody

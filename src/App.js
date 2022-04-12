@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { inputSaveFile, outputSaveFile } from "./game-save-file";
 import { Layout, Menu, PageHeader } from "antd";
 import MenuBar from "./components/menubar";
 import MapEditor from "./components/map-editor";

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { inputLevelFile, outputLevelFile } from "../game-level-file";
 import "./map-editor.css";
 
-export default function MapEditor(props) {
+export default function MapEditor(props: {}) {
   const [txt, setTxt] = useState("");
 
   return (
@@ -37,7 +37,7 @@ export default function MapEditor(props) {
         onClick={async () => {
           try {
             let save = JSON.parse(txt);
-            setTxt(JSON.stringify(save, undefined, 4))
+            setTxt(JSON.stringify(save, undefined, 4));
           } catch (e) {
             console.error(e);
           }

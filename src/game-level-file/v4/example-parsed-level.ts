@@ -1,4 +1,6 @@
-const EXAMPLE_LEVEL = {
+import { LevelRoot } from "./types";
+
+const EXAMPLE_LEVEL: LevelRoot = {
   blockType: "Root",
   version: "4", // required
   attemptOrder: ["push", "enter", "eat", "possess"], // attempt_order (used in Priority area in-game with value "enter,eat,push,possess".)

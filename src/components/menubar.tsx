@@ -1,24 +1,26 @@
-import { Menu } from "antd";
+import { Menu, MenuProps } from "antd";
 import Hotkeys from "react-hot-keys";
-import "./menubar.css"
+import "./menubar.css";
 
 const { SubMenu } = Menu;
 
-export default function MenuBar(props) {
+export default function MenuBar(
+  props: {
+    onItemTriggered: (actions: string) => unknown;
+  } & MenuProps
+) {
   const { onItemTriggered = nothing, ...otherProps } = props;
 
-  const menuProps = Object.assign(
-    {
-      theme: "dark",
-      mode: "horizontal",
-      selectable: false,
-      onClick: ({ key }) => onItemTriggered(key),
-      forceSubMenuRender: true, // to load shortcut
-    },
-    otherProps
-  );
+  const menuProps: MenuProps = {
+    theme: "dark",
+    mode: "horizontal",
+    selectable: false,
+    onClick: ({ key }) => onItemTriggered(key),
+    forceSubMenuRender: true, // to load shortcut
+    ...otherProps,
+  };
 
-  function ShortCut(props) {
+  function ShortCut(props: { id: string; shortCut: string }) {
     const { id, shortCut } = props;
     return (
       <Hotkeys keyName={shortCut} onKeyDown={() => onItemTriggered(id)}>

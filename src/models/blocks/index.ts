@@ -1,6 +1,7 @@
 import blocksSlice from "./slice";
 
-const reducer = blocksSlice.reducer;
-const actions = blocksSlice.actions;
+const blocksReducer = blocksSlice.reducer;
+const BLOCKS = blocksSlice.actions;
 
-export { blocksSlice as slice, reducer, actions };
+export default blocksSlice;
+export { blocksReducer, BLOCKS };

@@ -1,5 +1,6 @@
-const DEFAULT_HEADER = {
-  blockType: "Root",
+import { AttemptOrder, LevelHeader } from "./types";
+
+const DEFAULT_HEADER: LevelHeader = {
   version: "4",
   attemptOrder: ["push", "enter", "eat", "possess"],
   shed: false,
@@ -10,9 +11,14 @@ const DEFAULT_HEADER = {
 };
 
 const DEFAULT_ATTEMPT_ORDER = DEFAULT_HEADER.attemptOrder;
-const APPENDIX_PRIORITY_ATTEMPT_ORDER = ["enter", "eat", "push", "possess"];
+const APPENDIX_PRIORITY_ATTEMPT_ORDER: AttemptOrder = [
+  "enter",
+  "eat",
+  "push",
+  "possess",
+];
+
 const ATTEMPT_NAMES = new Set(DEFAULT_ATTEMPT_ORDER);
-const DRAW_STYLES = new Set(["", "tui", "grid", "oldstyle"]);
 
 const MUSIC = [
   { id: 0, name: "intro" },
@@ -44,6 +50,5 @@ export {
   DEFAULT_ATTEMPT_ORDER,
   APPENDIX_PRIORITY_ATTEMPT_ORDER,
   ATTEMPT_NAMES,
-  DRAW_STYLES,
   MUSIC,
 };

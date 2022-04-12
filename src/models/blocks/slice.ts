@@ -23,7 +23,7 @@ function getCell(
   state: BlocksState,
   x: number,
   y: number
-): [Block, Cell, boolean] {
+): [Block?, Cell?, boolean?] {
   let blk = getBlock(state.list, state.editingBlock);
   if (blk === undefined || !validPos(blk, x, y)) {
     return [undefined, undefined, false];
@@ -84,7 +84,7 @@ interface BlockEdit {
 
 function update(state: BlocksState, action: { payload: BlockEdit }) {
   let updated = action.payload;
-  updated.id = updated.id | state.editingBlock;
+  updated.id = updated.id || state.editingBlock;
 
   let idx = getBlockIdx(state.list, updated.id);
   if (idx < 0) return state;
@@ -96,7 +96,7 @@ function resize(
   state: BlocksState,
   action: { payload: { id?: number; w: number; h: number } }
 ) {
-  let updatedId = action.payload.id | state.editingBlock;
+  let updatedId = action.payload.id || state.editingBlock;
   let blk = getBlock(state.list, updatedId);
   if (blk === undefined) return;
 
@@ -184,9 +184,9 @@ function updateCell(state: BlocksState, action: { payload: CellEdit }) {
   let [, cell, ok] = getCell(state, x, y);
   if (!ok) return;
 
-  for (const key in updated) {
+  for (const key in Object.keys(updated)) {
     if (key in cell) {
-      cell[key] = updated[key];
+      (cell as any)[key] = (updated as any)[key];
     }
   }
 }

@@ -1,12 +1,13 @@
-import { DEFAULT_ATTEMPT_ORDER, DEFAULT_HEADER } from "./const";
+import { DEFAULT_ATTEMPT_ORDER } from "./const";
+import { BaseBlock, Block, LevelHeader, LevelRoot } from "./types";
 
-export default function encodeLevel(levelObj) {
+export default function encodeLevel(levelObj: LevelRoot): string {
   let header = encodeHeader(levelObj);
   let body = encodeBody(levelObj);
   return header + body;
 }
 
-const ENCODE_HEADER_LINES = [
+const ENCODE_HEADER_LINES: [keyof LevelHeader, (arg: any) => string][] = [
   ["version", (version) => `version ${version}\n`],
   [
     "attemptOrder",
@@ -31,7 +32,7 @@ const ENCODE_HEADER_LINES = [
   ],
 ];
 
-function encodeHeader(headers = DEFAULT_HEADER) {
+function encodeHeader(headers: LevelHeader): string {
   let res = "";
   for (const [propKey, encodeLine] of ENCODE_HEADER_LINES) {
     res += encodeLine(headers[propKey]);
@@ -40,7 +41,7 @@ function encodeHeader(headers = DEFAULT_HEADER) {
   return res;
 }
 
-const ENCODE_BODY_LINE = {
+const ENCODE_BODY_LINE: { [k: string]: (arg: any) => string } = {
   Block: (blk) =>
     `Block ${blk.x} ${blk.y} ${blk.id} ${blk.width} ${blk.height} ${blk.hue} ${
       blk.sat
@@ -64,13 +65,17 @@ const ENCODE_BODY_LINE = {
   Floor: (floor) => `Floor ${floor.x} ${floor.y} ${floor.floorType}`,
 };
 
-function encodeBody(root) {
+function encodeBody(root: LevelRoot): string {
   let lines = encodeBodyImpl(root.children, 0, []);
   lines.push("");
   return lines.join("\n");
 }
 
-function encodeBodyImpl(children, level, lines) {
+function encodeBodyImpl(
+  children: BaseBlock[],
+  level: number,
+  lines: string[]
+): string[] {
   for (const node of children) {
     const encode = ENCODE_BODY_LINE[node.blockType];
     if (encode === undefined) {
@@ -80,12 +85,13 @@ function encodeBodyImpl(children, level, lines) {
     lines.push(`${"\t".repeat(level)}${encode(node)}`);
 
     if (node.blockType === "Block") {
-      encodeBodyImpl(node.children, level + 1, lines);
+      let blkNode = node as Block;
+      encodeBodyImpl(blkNode.children, level + 1, lines);
     }
   }
   return lines;
 }
 
-function arrEq(arr1, arr2) {
+function arrEq(arr1: any[], arr2: any[]): boolean {
   return arr1.length === arr2.length && arr1.every((val, i) => val === arr2[i]);
 }

@@ -50,6 +50,6 @@ export interface Box {
   rgb: [number, number, number];
 }
 
-type Cell = undefined | Ref | Wall | Floor | SimplePlayer | Box;
+type Cell = Ref | Wall | Floor | SimplePlayer | Box;
 
 export default Cell;

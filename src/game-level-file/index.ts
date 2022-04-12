@@ -1,14 +1,15 @@
-import v4 from "./v4"
+import v4 from "./v4";
+import { LevelRoot } from "./v4/types";
 
 const MAX_LEVEL_FILE_SIZE = 1 << 20;
 
-export async function inputLevelFile() {
+export async function inputLevelFile(): Promise<LevelRoot> {
   let content = await inputTxtFile(MAX_LEVEL_FILE_SIZE);
   let level = parseLevel(content);
   return level;
 }
 
-function parseLevel(txtData = "") {
+function parseLevel(txtData: string): LevelRoot {
   let versionLine = txtData.slice(0, txtData.indexOf("\n"));
   let [versionKey, version] = versionLine.trim().split(" ");
 
@@ -23,7 +24,7 @@ function parseLevel(txtData = "") {
   }
 }
 
-async function inputTxtFile(maxSize = 1000) {
+async function inputTxtFile(maxSize: number = 1000): Promise<string> {
   let el = document.createElement("input");
   el.type = "file";
   el.accept = "text/plain";
@@ -31,15 +32,17 @@ async function inputTxtFile(maxSize = 1000) {
   return new Promise((resolve, reject) => {
     el.onchange = (e) => {
       e.preventDefault();
-      let file = e.target.files[0];
+      let inputEle = e.target as HTMLInputElement;
+      let file = (inputEle.files as FileList)[0];
+
       if (file.size > maxSize) {
         reject(new Error("file size too large"));
         return;
       }
 
       let reader = new FileReader();
-      reader.onload = async (e) => {
-        const text = e.target.result;
+      reader.onload = (e) => {
+        const text = reader.result as string;
         resolve(text);
       };
       reader.readAsText(file);
@@ -49,18 +52,19 @@ async function inputTxtFile(maxSize = 1000) {
   });
 }
 
-export async function outputLevelFile(levelObj, filename = "level.txt") {
+export async function outputLevelFile(
+  levelObj: LevelRoot,
+  filename: string = "level.txt"
+) {
   let encoded = v4.encodeLevel(levelObj);
   outputTxtFile(encoded, filename);
 }
 
-function outputTxtFile(text, filename = "text.txt") {
-  console.log("saving to:", filename)
+function outputTxtFile(text: string, filename: string = "text.txt") {
+  console.log("saving to:", filename);
   let a = document.createElement("a");
   let file = new Blob([text], { type: "text/plain" });
   a.href = URL.createObjectURL(file);
   a.download = filename;
   a.click();
 }
-
-

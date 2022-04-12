@@ -1,38 +1,54 @@
-import { ATTEMPT_NAMES, DEFAULT_HEADER, DRAW_STYLES } from "./const";
+import { FloorType } from "../../models/blocks/cell";
+import { DEFAULT_HEADER } from "./const";
+import {
+  isDrawStyle,
+  isAttemptOrder,
+  LevelHeader,
+  AttemptOrder,
+  DrawStyle,
+  LevelRoot,
+  AnyBlock,
+  Block,
+} from "./types";
 
-const HEADER_PARSE = {
-  version: (tokens, headers) => (headers.version = tokens[1]),
+const HEADER_PARSE: {
+  [k: string]: (tokens: string[], headers: LevelHeader) => unknown;
+} = {
+  version: (tokens, headers) => (headers.version = tokens[1] as "4"),
   attempt_order: (tokens, headers) =>
-    (headers.attemptOrder = tokens[1].split(",")),
+    (headers.attemptOrder = tokens[1].split(",") as AttemptOrder),
   shed: (tokens, headers) => (headers.shed = tokens[1] === "1"),
   inner_push: (tokens, headers) => (headers.innerPush = tokens[1] === "1"),
-  draw_style: (tokens, headers) => (headers.drawStyle = tokens[1]),
+  draw_style: (tokens, headers) => (headers.drawStyle = tokens[1] as DrawStyle),
   custom_level_music: (tokens, headers) =>
     (headers.customLevelMusic = parseInt(tokens[1])),
   custom_level_palette: (tokens, headers) =>
     (headers.customLevelPalette = parseInt(tokens[1])),
 };
 
-const HEADER_CHECK = {
+const HEADER_CHECK: { [k: string]: (header: LevelHeader) => boolean } = {
   version: (headers) => headers.version === "4",
-  attempt_order: (headers) =>
-    new Set(headers.attemptOrder).size === 4 &&
-    headers.attemptOrder.every((val) => ATTEMPT_NAMES.has(val)),
+  attempt_order: (headers) => isAttemptOrder(headers.attemptOrder),
   shed: (headers) => typeof headers.shed === "boolean",
   inner_push: (headers) => typeof headers.innerPush === "boolean",
-  draw_style: (headers) => DRAW_STYLES.has(headers.drawStyle),
+  draw_style: (headers) => isDrawStyle(headers.drawStyle),
   custom_level_music: (headers) => !isNaN(headers.customLevelMusic),
   custom_level_palette: (headers) => !isNaN(headers.customLevelPalette),
 };
 
-export default function parseLevel(txtData = "") {
-  let txtLines = txtData.split("\n").map((line) => line.trimEnd());
-  if (txtLines[txtLines.length - 1] === "") {
-    txtLines.pop();
-  }
-  let tokenLines = txtLines.map((txtLine) => txtLine.split(" "));
+export default function parseLevel(txtData: string): LevelRoot {
+  let txtLines = txtData
+    .split("\n")
+    .map((line) => line.trimEnd())
+    .filter((line) => line.length !== 0);
+  let tokenLines = txtLines.map((txtLine) => txtLine.split(/ +/));
 
-  let result = Object.assign({}, DEFAULT_HEADER, { children: [] });
+  let result: LevelRoot = {
+    blockType: "Root",
+    children: [],
+    ...DEFAULT_HEADER,
+  };
+
   let lineNo = 0;
   for (const tokens of tokenLines) {
     let headerKey = tokens[0];
@@ -56,7 +72,7 @@ export default function parseLevel(txtData = "") {
   return result;
 }
 
-const PARSE_BLOCK = {
+const PARSE_BLOCK: { [k: string]: (tokens: string[]) => AnyBlock } = {
   Block: (tokens) => ({
     // Block x y id width height hue sat val zoomfactor fillwithwalls player possessable playerorder fliph floatinspace specialeffect
     blockType: "Block",
@@ -111,7 +127,7 @@ const PARSE_BLOCK = {
     blockType: "Floor",
     x: mustParseInt(tokens[1]),
     y: mustParseInt(tokens[2]),
-    floorType: mustIn(tokens[3], ["Button", "PlayerButton"]),
+    floorType: mustIn(tokens[3], ["Button", "PlayerButton"]) as FloorType,
   }),
 };
 
@@ -124,24 +140,31 @@ const PARSE_BLOCK = {
  * @param {number} begLineNo the first line to be parsed
  * @returns {number} the last line of token that has been parsed into object
  */
-function parseBody(parent, depth, tokenLines, begLineNo) {
+function parseBody(
+  parent: Block | LevelRoot,
+  depth: number,
+  tokenLines: string[][],
+  begLineNo: number
+): number {
   for (let i = begLineNo; i < tokenLines.length; ++i) {
     let tokens = tokenLines[i];
     let blockType = tokens[0].trim();
     let lineDepth = tokens[0].length - blockType.length;
 
     if (lineDepth < depth) {
-      return i-1;
+      return i - 1;
     }
 
     if (lineDepth > depth) {
       let lastBlock = parent.children[parent.children.length - 1];
-      if (lastBlock.blockType !== "Block") {
+      if (!["Block", "Root"].includes(lastBlock.blockType)) {
         throw new Error(
-          `line ${i + 1}: ${lastBlock} type block should not have children`
+          `line ${i + 1}: ${
+            lastBlock.blockType
+          } type block should not have children`
         );
       }
-      i = parseBody(lastBlock, depth + 1, tokenLines, i);
+      i = parseBody(lastBlock as Block | LevelRoot, depth + 1, tokenLines, i);
       continue;
     }
 
@@ -149,21 +172,29 @@ function parseBody(parent, depth, tokenLines, begLineNo) {
     if (parse === undefined) {
       throw new Error(`line ${i + 1}: unknown block type: ${blockType}`);
     }
+
     let newBlk = parse(tokens);
-    parent.children.push(newBlk);
+    if (parent.blockType === "Root" && newBlk.blockType !== "Block") {
+      throw new Error(
+        `line ${i + 1}: ${newBlk.blockType} should not appeared at the root`
+      );
+    }
+
+    if (parent.blockType === "Root") parent.children.push(newBlk as Block);
+    else (parent as Block).children.push(newBlk);
   }
+  return tokenLines.length - 1;
 }
 
-
-function mustParseInt(str, base) {
-  let res = parseInt(str, base);
+function mustParseInt(str: string, radix?: number): number {
+  let res = parseInt(str, radix);
   if (isNaN(res)) {
     throw new EvalError();
   }
   return res;
 }
 
-function mustParseFloat(str, min, max) {
+function mustParseFloat(str: string, min: number, max: number): number {
   let res = parseFloat(str);
   if (isNaN(res)) {
     throw new EvalError();
@@ -174,7 +205,7 @@ function mustParseFloat(str, min, max) {
   return res;
 }
 
-function mustIn(val, list) {
+function mustIn<Type>(val: Type, list: Type[]): Type {
   if (list.some((v) => v === val)) {
     return val;
   }

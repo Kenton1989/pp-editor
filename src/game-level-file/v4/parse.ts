@@ -1,4 +1,4 @@
-import { FloorType } from "../../models/blocks/cell";
+import { FloorType } from "./types";
 import { DEFAULT_HEADER } from "./const";
 import {
   isDrawStyle,

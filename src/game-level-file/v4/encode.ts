@@ -73,7 +73,7 @@ function encodeBody(root: LevelRoot): string {
 
 function encodeBodyImpl(
   children: BaseBlock[],
-  level: number,
+  depth: number,
   lines: string[]
 ): string[] {
   for (const node of children) {
@@ -82,11 +82,11 @@ function encodeBodyImpl(
       throw new TypeError("unknown block type: " + node.blockType);
     }
 
-    lines.push(`${"\t".repeat(level)}${encode(node)}`);
+    lines.push(`${"\t".repeat(depth)}${encode(node)}`);
 
     if (node.blockType === "Block") {
       let blkNode = node as Block;
-      encodeBodyImpl(blkNode.children, level + 1, lines);
+      encodeBodyImpl(blkNode.children, depth + 1, lines);
     }
   }
   return lines;

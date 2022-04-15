@@ -32,7 +32,10 @@ async function inputTxtFile(maxSize: number = 1000): Promise<string> {
   return new Promise((resolve, reject) => {
     el.onchange = (e) => {
       e.preventDefault();
+
       let inputEle = e.target as HTMLInputElement;
+
+      if (!inputEle.files || inputEle.files.length === 0) return;
       let file = (inputEle.files as FileList)[0];
 
       if (file.size > maxSize) {
@@ -41,13 +44,12 @@ async function inputTxtFile(maxSize: number = 1000): Promise<string> {
       }
 
       let reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = () => {
         const text = reader.result as string;
         resolve(text);
       };
       reader.readAsText(file);
     };
-    console.log("input");
     el.click();
   });
 }
@@ -61,7 +63,6 @@ export async function outputLevelFile(
 }
 
 function outputTxtFile(text: string, filename: string = "text.txt") {
-  console.log("saving to:", filename);
   let a = document.createElement("a");
   let file = new Blob([text], { type: "text/plain" });
   a.href = URL.createObjectURL(file);

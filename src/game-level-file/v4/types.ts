@@ -28,7 +28,7 @@ export function isDrawStyle(s: string): boolean {
 }
 
 export interface LevelHeader {
-  version: "4" | 4;
+  version: "4";
   attemptOrder: AttemptOrder;
   shed: boolean;
   innerPush: boolean;
@@ -97,9 +97,11 @@ export interface Wall extends BaseBlock {
   playerOrder: number;
 }
 
+export type FloorType = "PlayerButton" | "Button";
+
 export interface Floor extends BaseBlock {
   blockType: "Floor";
   x: number;
   y: number;
-  floorType: "Button" | "PlayerButton";
+  floorType: FloorType;
 }

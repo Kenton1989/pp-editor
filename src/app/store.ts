@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import blocksSlice from "../models/blocks";
+import blocksSlice from "../models/edit-level";
 
 export const store = configureStore({
   reducer: {

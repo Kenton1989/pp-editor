@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { Cell, Block, Grid } from "./types";
 import { LevelState, initialState } from "./state";
 import {
@@ -55,12 +55,13 @@ function makeGrid(width: number, height: number, oldGrid: Grid = []): Cell[][] {
 }
 
 function createBlk(state: LevelState) {
+  console.log("create new block");
   let newBlk: Block = {
     id: genBlockId(),
-    name: `Block ${state.counter}`,
+    name: `Block ${state.counter++}`,
     width: 7,
     height: 7,
-    rgb: [0, 0, 0],
+    hsl: [0, 0, 0],
     zoomFactor: 1,
     fillWithWalls: false,
     floatInSpace: false,
@@ -70,7 +71,7 @@ function createBlk(state: LevelState) {
   state.blocks.push(newBlk);
 }
 
-function removeBlk(state: LevelState, action: { payload: number }) {
+function removeBlk(state: LevelState, action: PayloadAction<number>) {
   let deletedBlkId = action.payload;
   state.blocks = state.blocks.filter((val) => val.id !== deletedBlkId);
 }
@@ -78,13 +79,13 @@ function removeBlk(state: LevelState, action: { payload: number }) {
 interface BlockEdit {
   id: number; // used for searching block
   name?: string;
-  rgb?: [number, number, number];
+  hsl?: [number, number, number];
   zoomFactor?: number;
   fillWithWalls?: boolean;
   floatInSpace?: boolean;
 }
 
-function updateBlk(state: LevelState, action: { payload: BlockEdit }) {
+function updateBlk(state: LevelState, action: PayloadAction<BlockEdit>) {
   let updated = action.payload;
 
   let idx = getBlockIdx(state.blocks, updated.id);
@@ -95,7 +96,7 @@ function updateBlk(state: LevelState, action: { payload: BlockEdit }) {
 
 function resizeBlk(
   state: LevelState,
-  action: { payload: { id: number; w: number; h: number } }
+  action: PayloadAction<{ id: number; w: number; h: number }>
 ) {
   let updatedId = action.payload.id;
   let blk = getBlock(state.blocks, updatedId);
@@ -110,7 +111,7 @@ function resizeBlk(
 
 function setCell(
   state: LevelState,
-  action: { payload: { cell: Cell; blkId: number } }
+  action: PayloadAction<{ cell: Cell; blkId: number }>
 ) {
   let { blkId, cell } = action.payload;
   let { x, y } = cell;
@@ -122,9 +123,11 @@ function setCell(
 
 function moveCell(
   state: LevelState,
-  action: {
-    payload: { blkId: number; from: [number, number]; to: [number, number] };
-  }
+  action: PayloadAction<{
+    blkId: number;
+    from: [number, number];
+    to: [number, number];
+  }>
 ) {
   let {
     from: [x1, y1],
@@ -151,7 +154,7 @@ interface CellEdit {
   blkId: number;
   x: number; // to locate cell
   y: number; // to locate cell
-  rgb?: [number, number, number];
+  hsl?: [number, number, number];
   id?: number;
   exitBlock?: boolean;
   infExit?: boolean;
@@ -168,7 +171,7 @@ interface CellEdit {
   floorType?: FloorType;
 }
 
-function updateCell(state: LevelState, action: { payload: CellEdit }) {
+function updateCell(state: LevelState, action: PayloadAction<CellEdit>) {
   let update = action.payload;
   let { blkId, x, y } = update;
   let [ok, , cell] = getCell(state, blkId, x, y);
@@ -191,7 +194,7 @@ interface HeaderEdit {
   customLevelPalette?: number;
 }
 
-function updateHeader(state: LevelState, action: { payload: HeaderEdit }) {
+function updateHeader(state: LevelState, action: PayloadAction<HeaderEdit>) {
   let newHeader = action.payload;
   if (newHeader.attemptOrder && !isAttemptOrder(newHeader.attemptOrder)) {
     throw new TypeError(`invalid attempt order: ${newHeader.attemptOrder}`);

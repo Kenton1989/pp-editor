@@ -6,14 +6,42 @@ import {
   Wall,
 } from "../../game-level-file/v4/types";
 
-type DefaultColor =
-  | "default root"
+export type DefaultColor =
+  | "root block"
   | "color A"
   | "color B"
   | "color C"
   | "box"
   | "player";
-type Color = [number, number, number] | DefaultColor;
+
+export type HslColor = [number, number, number] | DefaultColor;
+
+export function toHslArr(color: HslColor): [number, number, number] {
+  if (typeof color === "string") {
+    switch (color) {
+      case "root block":
+        return [0, 0, 90];
+      case "color A":
+        return [213, 100, 60];
+      case "color B":
+        return [147, 100, 60];
+      case "color C":
+        return [193, 100, 60];
+      case "box":
+        return [40, 100, 60];
+      case "player":
+        return [324, 100, 40];
+      default:
+        throw new RangeError("unknown color name: ", color);
+    }
+  }
+  return color as [number, number, number];
+}
+
+export function toHslStr(color: HslColor): string {
+  let [h, s, l] = toHslArr(color);
+  return `hsl(${h},${s}%,${l}%)`;
+}
 
 export interface HeaderState extends LevelHeader {
   title: string;
@@ -37,7 +65,7 @@ export interface SimplePlayerCell {
   cellType: "SimplePlayer";
   x: number;
   y: number;
-  rgb: Color;
+  hsl: HslColor;
   playerOrder: number;
 }
 
@@ -45,7 +73,7 @@ export interface BoxCell {
   cellType: "Box";
   x: number;
   y: number;
-  rgb: Color;
+  hsl: HslColor;
 }
 
 export type Cell = RefCell | WallCell | FloorCell | SimplePlayerCell | BoxCell;
@@ -57,7 +85,7 @@ export interface Block {
   name: string;
   width: number;
   height: number;
-  rgb: Color;
+  hsl: HslColor;
   zoomFactor: number;
   fillWithWalls: boolean;
   floatInSpace: boolean;

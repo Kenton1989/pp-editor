@@ -1,8 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import Block from "./block";
-import Cell from "./cell";
+import { Cell, Block, Grid } from "./types";
 import { LevelState, initialState } from "./state";
-import { FloorType } from "../../game-level-file/v4/types";
+import {
+  AttemptOrder,
+  DrawStyle,
+  FloorType,
+  isAttemptOrder,
+} from "../../game-level-file/v4/types";
 
 function genBlockId(): number {
   return Date.now();
@@ -12,7 +16,7 @@ function getBlockIdx(blocks: Block[], id: number): number {
   return blocks.findIndex((val) => val.id === id);
 }
 
-function getBlock(blocks: Block[], id: number): Block {
+function getBlock(blocks: Block[], id: number): Block | undefined {
   return blocks.find((val) => val.id === id);
 }
 
@@ -25,19 +29,15 @@ function getCell(
   blkId: number,
   x: number,
   y: number
-): [Block, Cell, boolean] {
+): [boolean, Block?, Cell?] {
   let blk = getBlock(state.blocks, blkId);
   if (blk === undefined || !validPos(blk, x, y)) {
-    return [undefined, undefined, false];
+    return [false, undefined, undefined];
   }
-  return [blk, blk.grid[x][y], true];
+  return [true, blk, blk.grid[x][y]];
 }
 
-function makeGrid(
-  width: number,
-  height: number,
-  oldGrid: Cell[][] = []
-): Cell[][] {
+function makeGrid(width: number, height: number, oldGrid: Grid = []): Cell[][] {
   let res: Cell[][] = Array(width).map((_, i) => {
     if (i < oldGrid.length) {
       let oldHeight = oldGrid[i].length;
@@ -115,10 +115,9 @@ function setCell(
   let { blkId, cell } = action.payload;
   let { x, y } = cell;
 
-  let [blk, , ok] = getCell(state, blkId, x, y);
+  let [ok, blk] = getCell(state, blkId, x, y);
   if (!ok) return;
-
-  blk.grid[x][y] = cell;
+  blk!.grid[x][y] = cell;
 }
 
 function moveCell(
@@ -135,13 +134,17 @@ function moveCell(
 
   if (x1 === x2 && y1 === y2) return;
 
-  let [blk, src, ok] = getCell(state, blkId, x1, y1);
+  let [ok, blk, src] = getCell(state, blkId, x1, y1);
   if (!ok) return;
-  if (!validPos(blk, x2, y2)) return;
+  if (!validPos(blk!, x2, y2)) return;
 
+  if (src === undefined) {
+    blk!.grid[x2][y2] = undefined;
+    return;
+  }
   let newCell = { ...src, x: x2, y: y2 };
-  blk.grid[x1][y1] = undefined;
-  blk.grid[x2][y2] = newCell;
+  blk!.grid[x1][y1] = undefined;
+  blk!.grid[x2][y2] = newCell;
 }
 
 interface CellEdit {
@@ -168,18 +171,42 @@ interface CellEdit {
 function updateCell(state: LevelState, action: { payload: CellEdit }) {
   let update = action.payload;
   let { blkId, x, y } = update;
-  let [, cell, ok] = getCell(state, blkId, x, y);
+  let [ok, , cell] = getCell(state, blkId, x, y);
   if (!ok) return;
 
   for (const key in Object.keys(update)) {
-    if (key in cell) {
+    if (key in cell!) {
       (cell as any)[key] = (update as any)[key];
     }
   }
 }
 
-export const blocksSlice = createSlice({
-  name: "blocks",
+interface HeaderEdit {
+  title?: string;
+  attemptOrder?: AttemptOrder;
+  shed?: boolean;
+  innerPush?: boolean;
+  drawStyle?: DrawStyle;
+  customLevelMusic?: number;
+  customLevelPalette?: number;
+}
+
+function updateHeader(state: LevelState, action: { payload: HeaderEdit }) {
+  let newHeader = action.payload;
+  if (newHeader.attemptOrder && !isAttemptOrder(newHeader.attemptOrder)) {
+    throw new TypeError(`invalid attempt order: ${newHeader.attemptOrder}`);
+  }
+  for (const s in newHeader) {
+    let key = s as keyof HeaderEdit;
+    if (newHeader[key] === undefined) {
+      delete newHeader[key];
+    }
+  }
+  state.header = { ...state.header, ...newHeader };
+}
+
+export const levelSlice = createSlice({
+  name: "level",
   initialState,
   reducers: {
     createBlk,
@@ -189,7 +216,8 @@ export const blocksSlice = createSlice({
     setCell,
     moveCell,
     updateCell,
+    updateHeader,
   },
 });
 
-export default blocksSlice;
+export default levelSlice;

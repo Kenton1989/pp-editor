@@ -1,7 +1,7 @@
-import blocksSlice from "./slice";
+import levelSlice from "./slice";
 
-const blocksReducer = blocksSlice.reducer;
-const BLOCKS = blocksSlice.actions;
+const levelReducer = levelSlice.reducer;
+const LEVEL = levelSlice.actions;
 
-export default blocksSlice;
-export { blocksReducer, BLOCKS };
+export default levelSlice;
+export { levelReducer, LEVEL };

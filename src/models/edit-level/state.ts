@@ -1,5 +1,4 @@
-import Block from "./block";
-import { HeaderState } from "./header";
+import { HeaderState, Block } from "./types";
 
 export interface LevelState {
   header: HeaderState;

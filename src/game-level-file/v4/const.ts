@@ -20,7 +20,12 @@ const APPENDIX_PRIORITY_ATTEMPT_ORDER: AttemptOrder = [
 
 const ATTEMPT_NAMES = new Set(DEFAULT_ATTEMPT_ORDER);
 
-const MUSIC = [
+interface MusicInfo {
+  id: number;
+  name: string;
+}
+
+const MUSICS: MusicInfo[] = [
   { id: 0, name: "intro" },
   { id: 1, name: "enter" },
   { id: 2, name: "empty" },
@@ -45,10 +50,20 @@ const MUSIC = [
   { id: 21, name: "credit" },
 ];
 
+function getMusic(id: number): MusicInfo {
+  if (id < 0 || id > MUSICS.length) {
+    return {
+      id: id,
+      name: "no music",
+    };
+  }
+  return MUSICS[id];
+}
+
 export {
   DEFAULT_HEADER,
   DEFAULT_ATTEMPT_ORDER,
   APPENDIX_PRIORITY_ATTEMPT_ORDER,
   ATTEMPT_NAMES,
-  MUSIC,
+  getMusic,
 };

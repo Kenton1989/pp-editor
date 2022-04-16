@@ -114,11 +114,34 @@ function setCell(
   action: PayloadAction<{ cell: Cell; blkId: number }>
 ) {
   let { blkId, cell } = action.payload;
-  let { x, y } = cell;
+  setCellImpl(state, blkId, cell);
+}
 
+function setCellImpl(state: LevelState, blkId: number, cell: Cell) {
+  let { x, y } = cell;
   let [ok, blk] = getCell(state, blkId, x, y);
   if (!ok) return;
   blk!.grid[x][y] = cell;
+}
+
+function removeCell(
+  state: LevelState,
+  action: PayloadAction<{ pos: [number, number]; blkId: number }>
+) {
+  let { blkId, pos } = action.payload;
+  removeCellImpl(state, blkId, pos);
+}
+
+function removeCellImpl(
+  state: LevelState,
+  blkId: number,
+  pos: [number, number]
+) {
+  let [x, y] = pos;
+
+  let [ok, blk] = getCell(state, blkId, x, y);
+  if (!ok) return;
+  blk!.grid[x][y] = undefined;
 }
 
 function moveCell(
@@ -208,6 +231,26 @@ function updateHeader(state: LevelState, action: PayloadAction<HeaderEdit>) {
   state.header = { ...state.header, ...newHeader };
 }
 
+function setCells(
+  state: LevelState,
+  action: PayloadAction<{ cells: Cell[]; blkId: number }>
+) {
+  let { blkId, cells } = action.payload;
+  for (const cell of cells) {
+    setCellImpl(state, blkId, cell);
+  }
+}
+
+function removeCells(
+  state: LevelState,
+  action: PayloadAction<{ posList: [number, number][]; blkId: number }>
+) {
+  let { blkId, posList } = action.payload;
+  for (const pos of posList) {
+    removeCellImpl(state, blkId, pos);
+  }
+}
+
 export const levelSlice = createSlice({
   name: "level",
   initialState,
@@ -217,8 +260,11 @@ export const levelSlice = createSlice({
     updateBlk,
     resizeBlk,
     setCell,
+    removeCell,
     moveCell,
     updateCell,
+    setCells,
+    removeCells,
     updateHeader,
   },
 });

@@ -7,6 +7,7 @@ import { initialState, UiState } from "./state";
 function selectBlk(state: UiState, action: PayloadAction<number>) {
   let blkId = action.payload;
   state.editingBlk = blkId;
+  state.editingCell = undefined;
 }
 
 function selectCell(state: UiState, action: PayloadAction<[number, number]>) {

@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import levelSlice from "../models/edit-level";
 import uiSlice from "../models/edit-ui/slice";
+import undoable from "redux-undo";
 
 export const store = configureStore({
   reducer: {
-    [levelSlice.name]: levelSlice.reducer,
+    [levelSlice.name]: undoable(levelSlice.reducer),
     [uiSlice.name]: uiSlice.reducer,
   },
 });

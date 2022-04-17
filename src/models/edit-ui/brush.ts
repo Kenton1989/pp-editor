@@ -45,7 +45,7 @@ export type Brush =
   | SimplePlayerBrush
   | BoxBrush;
 
-export const DEFAULT_BRUSH: { [k: string]: Brush } = {
+export const DEFAULT_BRUSH = {
   select: {
     brushType: "Select",
   },
@@ -65,6 +65,7 @@ export const DEFAULT_BRUSH: { [k: string]: Brush } = {
   player: {
     brushType: "SimplePlayer",
     hsl: "player",
+    possessable: true,
     playerOrder: 0,
   },
   box: {

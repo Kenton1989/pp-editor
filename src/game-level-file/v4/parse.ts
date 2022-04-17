@@ -3,16 +3,16 @@ import { DEFAULT_HEADER } from "./const";
 import {
   isDrawStyle,
   isAttemptOrder,
-  LevelHeader,
+  RawLevelHeader,
   AttemptOrder,
   DrawStyle,
   LevelRoot,
   AnyBlock,
-  Block,
+  RawBlock,
 } from "./types";
 
 const HEADER_PARSE: {
-  [k: string]: (tokens: string[], headers: LevelHeader) => unknown;
+  [k: string]: (tokens: string[], headers: RawLevelHeader) => unknown;
 } = {
   version: (tokens, headers) => (headers.version = tokens[1] as "4"),
   attempt_order: (tokens, headers) =>
@@ -26,7 +26,7 @@ const HEADER_PARSE: {
     (headers.customLevelPalette = parseInt(tokens[1])),
 };
 
-const HEADER_CHECK: { [k: string]: (header: LevelHeader) => boolean } = {
+const HEADER_CHECK: { [k: string]: (header: RawLevelHeader) => boolean } = {
   version: (headers) => headers.version === "4",
   attempt_order: (headers) => isAttemptOrder(headers.attemptOrder),
   shed: (headers) => typeof headers.shed === "boolean",
@@ -141,7 +141,7 @@ const PARSE_BLOCK: { [k: string]: (tokens: string[]) => AnyBlock } = {
  * @returns {number} the last line of token that has been parsed into object
  */
 function parseBody(
-  parent: Block | LevelRoot,
+  parent: RawBlock | LevelRoot,
   depth: number,
   tokenLines: string[][],
   begLineNo: number
@@ -164,7 +164,12 @@ function parseBody(
           } type block should not have children`
         );
       }
-      i = parseBody(lastBlock as Block | LevelRoot, depth + 1, tokenLines, i);
+      i = parseBody(
+        lastBlock as RawBlock | LevelRoot,
+        depth + 1,
+        tokenLines,
+        i
+      );
       continue;
     }
 
@@ -180,8 +185,8 @@ function parseBody(
       );
     }
 
-    if (parent.blockType === "Root") parent.children.push(newBlk as Block);
-    else (parent as Block).children.push(newBlk);
+    if (parent.blockType === "Root") parent.children.push(newBlk as RawBlock);
+    else (parent as RawBlock).children.push(newBlk);
   }
   return tokenLines.length - 1;
 }

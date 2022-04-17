@@ -1,0 +1,14 @@
+.brush-menu {
+  display: flex;
+  align-items: stretch;
+}
+
+#simple-brushes {
+  display: inline-block;
+  width: 80px;
+}
+
+#ref-brushes {
+  display: inline-block;
+  flex-grow: 1;
+}

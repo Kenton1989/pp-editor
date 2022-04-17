@@ -3,10 +3,10 @@ import { LevelRoot } from "./v4/types";
 
 const MAX_LEVEL_FILE_SIZE = 1 << 20;
 
-export async function inputLevelFile(): Promise<LevelRoot> {
-  let content = await inputTxtFile(MAX_LEVEL_FILE_SIZE);
+export async function inputLevelFile(): Promise<[LevelRoot, string]> {
+  let [content, filename] = await inputTxtFile(MAX_LEVEL_FILE_SIZE);
   let level = parseLevel(content);
-  return level;
+  return [level, filename];
 }
 
 function parseLevel(txtData: string): LevelRoot {
@@ -24,7 +24,7 @@ function parseLevel(txtData: string): LevelRoot {
   }
 }
 
-async function inputTxtFile(maxSize: number = 1000): Promise<string> {
+async function inputTxtFile(maxSize: number = 1000): Promise<[string, string]> {
   let el = document.createElement("input");
   el.type = "file";
   el.accept = "text/plain";
@@ -46,7 +46,7 @@ async function inputTxtFile(maxSize: number = 1000): Promise<string> {
       let reader = new FileReader();
       reader.onload = () => {
         const text = reader.result as string;
-        resolve(text);
+        resolve([text, file.name]);
       };
       reader.readAsText(file);
     };

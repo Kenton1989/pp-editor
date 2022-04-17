@@ -27,7 +27,7 @@ export function isDrawStyle(s: string): boolean {
   return DRAW_STYLES.has(s);
 }
 
-export interface LevelHeader {
+export interface RawLevelHeader {
   version: "4";
   attemptOrder: AttemptOrder;
   shed: boolean;
@@ -37,18 +37,14 @@ export interface LevelHeader {
   customLevelPalette: number;
 }
 
-export interface BaseBlock {
-  blockType: string;
-}
+export type AnyBlock = RawBlock | RawRef | RawWall | RawFloor;
 
-export type AnyBlock = Block | Ref | Wall | Floor;
-
-export interface LevelRoot extends LevelHeader, BaseBlock {
+export interface LevelRoot extends RawLevelHeader {
   blockType: "Root";
-  children: Block[];
+  children: RawBlock[];
 }
 
-export interface Block extends BaseBlock {
+export interface RawBlock {
   blockType: "Block";
   x: number;
   y: number;
@@ -69,7 +65,7 @@ export interface Block extends BaseBlock {
   children: AnyBlock[];
 }
 
-export interface Ref extends BaseBlock {
+export interface RawRef {
   blockType: "Ref";
   x: number;
   y: number;
@@ -88,7 +84,7 @@ export interface Ref extends BaseBlock {
   specialEffect: number;
 }
 
-export interface Wall extends BaseBlock {
+export interface RawWall {
   blockType: "Wall";
   x: number;
   y: number;
@@ -99,7 +95,7 @@ export interface Wall extends BaseBlock {
 
 export type FloorType = "PlayerButton" | "Button";
 
-export interface Floor extends BaseBlock {
+export interface RawFloor {
   blockType: "Floor";
   x: number;
   y: number;

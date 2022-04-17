@@ -1,5 +1,5 @@
 import { DEFAULT_ATTEMPT_ORDER } from "./const";
-import { BaseBlock, Block, LevelHeader, LevelRoot } from "./types";
+import { RawBlock, RawLevelHeader, LevelRoot, AnyBlock } from "./types";
 
 export default function encodeLevel(levelObj: LevelRoot): string {
   let header = encodeHeader(levelObj);
@@ -7,7 +7,7 @@ export default function encodeLevel(levelObj: LevelRoot): string {
   return header + body;
 }
 
-const ENCODE_HEADER_LINES: [keyof LevelHeader, (arg: any) => string][] = [
+const ENCODE_HEADER_LINES: [keyof RawLevelHeader, (arg: any) => string][] = [
   ["version", (version) => `version ${version}\n`],
   [
     "attemptOrder",
@@ -32,7 +32,7 @@ const ENCODE_HEADER_LINES: [keyof LevelHeader, (arg: any) => string][] = [
   ],
 ];
 
-function encodeHeader(headers: LevelHeader): string {
+function encodeHeader(headers: RawLevelHeader): string {
   let res = "";
   for (const [propKey, encodeLine] of ENCODE_HEADER_LINES) {
     res += encodeLine(headers[propKey]);
@@ -72,7 +72,7 @@ function encodeBody(root: LevelRoot): string {
 }
 
 function encodeBodyImpl(
-  children: BaseBlock[],
+  children: AnyBlock[],
   depth: number,
   lines: string[]
 ): string[] {
@@ -85,7 +85,7 @@ function encodeBodyImpl(
     lines.push(`${"\t".repeat(depth)}${encode(node)}`);
 
     if (node.blockType === "Block") {
-      let blkNode = node as Block;
+      let blkNode = node as RawBlock;
       encodeBodyImpl(blkNode.children, depth + 1, lines);
     }
   }

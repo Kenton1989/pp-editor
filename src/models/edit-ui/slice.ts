@@ -17,7 +17,7 @@ function selectCell(state: UiState, action: PayloadAction<[number, number]>) {
 
 function setBrush(state: UiState, action: PayloadAction<Brush>) {
   let brush = action.payload;
-  state.brush = brush;
+  state.brush = { ...brush };
 }
 
 interface BrushEdit {

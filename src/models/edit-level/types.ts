@@ -1,9 +1,9 @@
 import {
   AnyBlock,
-  Floor,
-  LevelHeader,
-  Ref,
-  Wall,
+  RawFloor,
+  RawLevelHeader,
+  RawRef,
+  RawWall,
 } from "../../game-level-file/v4/types";
 
 export type DefaultColor =
@@ -43,21 +43,21 @@ export function toHslStr(color: HslColor): string {
   return `hsl(${h},${s}%,${l}%)`;
 }
 
-export interface HeaderState extends LevelHeader {
+export interface HeaderState extends RawLevelHeader {
   title: string;
 }
 
 type OmitBlockType<T extends AnyBlock> = Omit<T, "blockType">;
 
-export interface RefCell extends OmitBlockType<Ref> {
+export interface RefCell extends OmitBlockType<RawRef> {
   cellType: "Ref";
 }
 
-export interface WallCell extends OmitBlockType<Wall> {
+export interface WallCell extends OmitBlockType<RawWall> {
   cellType: "Wall";
 }
 
-export interface FloorCell extends OmitBlockType<Floor> {
+export interface FloorCell extends OmitBlockType<RawFloor> {
   cellType: "Floor";
 }
 
@@ -66,6 +66,7 @@ export interface SimplePlayerCell {
   x: number;
   y: number;
   hsl: HslColor;
+  possessable: false;
   playerOrder: number;
 }
 

@@ -1,6 +1,6 @@
-import { AttemptOrder, LevelHeader } from "./types";
+import { AttemptOrder, RawLevelHeader } from "./types";
 
-const DEFAULT_HEADER: LevelHeader = {
+const DEFAULT_HEADER: RawLevelHeader = {
   version: "4",
   attemptOrder: ["push", "enter", "eat", "possess"],
   shed: false,

@@ -3,5 +3,6 @@
     "node_modules": true,
     "build*": true
   },
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "svg.preview.background": "custom"
 }

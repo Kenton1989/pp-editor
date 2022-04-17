@@ -12,7 +12,7 @@ export default function MapEditor(props: {}) {
       <Button
         onClick={async () => {
           try {
-            let save = await inputLevelFile();
+            let [save, title] = await inputLevelFile();
             setTxt(JSON.stringify(save, undefined, 4));
           } catch (e) {
             console.error(e);

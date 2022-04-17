@@ -1,5 +1,5 @@
-<svg viewBox="0 0 832 832" width="832" height="832" focusable="false" data-icon="wall" width="1em" height="1em"
-  stroke="currentColor" fill="currentColor" aria-hidden="true">
+<svg viewBox="0 0 832 832" focusable="false" data-icon="wall" width="1em" height="1em" stroke="currentColor"
+  fill="currentColor" aria-hidden="true">
   <rect stroke-width="72" rx="8" height="728" width="728" y="52" x="52" fill="hsl(324, 100%, 40%)" />
   <ellipse ry="60" rx="60" cy="416" cx="270" fill="hsl(324, 100%, 15%)" stroke-width="0" />
   <ellipse ry="60" rx="60" cy="416" cx="562" fill="hsl(324, 100%, 15%)" stroke-width="0" />

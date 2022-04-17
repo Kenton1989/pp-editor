@@ -25,6 +25,7 @@ export interface SimplePlayerCell {
   x: number;
   y: number;
   hsl: HslColor;
+  player: boolean;
   possessable: boolean;
   playerOrder: number;
 }

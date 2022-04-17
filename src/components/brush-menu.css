@@ -5,10 +5,54 @@
 
 #simple-brushes {
   display: inline-block;
-  width: 80px;
+  padding-top: 40px;
+  background-color: white;
 }
 
 #ref-brushes {
   display: inline-block;
   flex-grow: 1;
+  overflow-y: scroll;
+}
+
+#ref-brushes .ant-list-footer {
+  align-items: center;
+  text-align: center;
+}
+
+#ref-brushes .ant-list-footer button {
+  max-width: 130px;
+}
+
+#ref-brushes label span {
+  width: 100%;
+}
+
+.simple-radio {
+  width: 100%;
+  height: 2em;
+  font-size: x-large;
+  border-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.block-radio {
+  width: 100%;
+  height: 80px;
+  border-width: 0;
+  border-bottom: 1px solid #eee;
+}
+.block-radio-content {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.block-radio img {
+  height: 50px;
+  width: 50px;
 }

@@ -1,33 +1,52 @@
 import { LevelRoot, RawBlock, RawRef } from "../../game-level-file/v4/types";
-import { LevelState } from "./state";
-import convert from "color-convert";
-import { SimplePlayerCell } from "./cell";
+import { BlockState, LevelState } from "./state";
+import { BoxCell, Grid, SimplePlayerCell } from "./cell";
+import { fromRawColor } from "./color";
 
-export function loadLevelState(level: LevelRoot): LevelState {
+export function loadLevelState(
+  level: LevelRoot,
+  title: string = "level"
+): LevelState {
   const { children, blockType, ...rawHeader } = level;
 
   let res: LevelState = {
-    header: { title: "", ...rawHeader },
+    header: { title, ...rawHeader },
     blocks: [],
     counter: 0,
   };
 
-  let rawBlks = getBlockDefs(level);
+  let rawBlks: RawBlock[] = [];
+  getBlockDefs(level, rawBlks);
 
   return res;
 }
 
-function getBlockDefs(block: LevelRoot | RawBlock): RawBlock[] {
-  let res: RawBlock[] = [];
+function getBlockDefs(block: LevelRoot | RawBlock, out: RawBlock[]) {
   for (const blk of block.children) {
     if (blk.blockType === "Block") {
-      res.push(blk);
+      out.push(blk);
+      getBlockDefs(blk, out);
     }
   }
-  for (const blk of res) {
-    res.push(...getBlockDefs(blk));
-  }
-  return res;
+}
+
+function trasformBlock(src: RawBlock): BlockState {
+  let newBlk: BlockState = {
+    id: src.id,
+    name: `Block ${src.id}`,
+    width: src.width,
+    height: src.height,
+    hsl: fromRawColor(src),
+    zoomFactor: src.zoomFactor,
+    fillWithWalls: src.fillWithWalls,
+    floatInSpace: src.floatInSpace,
+    grid: makeGrid(src.width, src.height),
+  };
+  return newBlk;
+}
+
+function makeGrid(w: number, h: number): Grid {
+  return [...Array(w)].map(() => [...Array(h)]);
 }
 
 function makeSimplePlayer(
@@ -36,18 +55,35 @@ function makeSimplePlayer(
 ): SimplePlayerCell | undefined {
   if (!isSimpleSolid(block, ref)) return undefined;
 
-  let isPlayer = ref === undefined ? block.player : ref.player;
-  if (!isPlayer) return undefined;
-  let { x, y, possessable, playerOrder } = ref === undefined ? block : ref;
-  let { hue, sat, val } = block;
-  let hsl = convert.hsv.hsl([hue * 360, sat * 100, val * 100]);
+  let { x, y, player, possessable, playerOrder } =
+    ref === undefined ? block : ref;
+
+  if (!player && !possessable) return undefined;
+  let hsl = fromRawColor(block);
 
   return {
     cellType: "SimplePlayer",
     x,
     y,
+    player,
     possessable,
     playerOrder,
+    hsl,
+  };
+}
+function makeSimpleBox(block: RawBlock, ref?: RawRef): BoxCell | undefined {
+  if (!isSimpleSolid(block, ref)) return undefined;
+
+  let { x, y, player, possessable, playerOrder } =
+    ref === undefined ? block : ref;
+
+  if (player || possessable || playerOrder) return undefined;
+  let hsl = fromRawColor(block);
+
+  return {
+    cellType: "Box",
+    x,
+    y,
     hsl,
   };
 }

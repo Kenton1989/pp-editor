@@ -5,8 +5,11 @@ import {
   DrawStyle,
   FloorType,
   isAttemptOrder,
+  LevelRoot,
 } from "../../game-level-file/v4/types";
 import { Cell, Grid } from "./cell";
+import { importLevelState } from "./io";
+import { DEFAULT_HEADER } from "../../game-level-file/v4/const";
 
 function genBlockId(): number {
   return Date.now();
@@ -38,7 +41,7 @@ function getCell(
 }
 
 function makeGrid(width: number, height: number, oldGrid: Grid = []): Cell[][] {
-  let res: Cell[][] = Array(width).map((_, i) => {
+  let res: Cell[][] = [...Array(width)].map((_, i) => {
     if (i < oldGrid.length) {
       let oldHeight = oldGrid[i].length;
       if (oldHeight > height) {
@@ -54,6 +57,28 @@ function makeGrid(width: number, height: number, oldGrid: Grid = []): Cell[][] {
   return res;
 }
 
+function reset(
+  state: LevelState,
+  action: PayloadAction<LevelState | undefined>
+): LevelState {
+  let newState = action.payload;
+  return (
+    newState ?? {
+      header: { title: "level", ...DEFAULT_HEADER },
+      blocks: [],
+      counter: 0,
+    }
+  );
+}
+
+function importLevel(
+  state: LevelState,
+  action: PayloadAction<{ raw: LevelRoot; title: string }>
+): LevelState {
+  let { raw, title } = action.payload;
+  return importLevelState(raw, title);
+}
+
 function createBlk(state: LevelState) {
   console.log("create new block");
   let newBlk: BlockState = {
@@ -65,6 +90,7 @@ function createBlk(state: LevelState) {
     zoomFactor: 1,
     fillWithWalls: false,
     floatInSpace: false,
+    specialEffect: 0,
     grid: makeGrid(7, 7),
   };
 
@@ -255,6 +281,8 @@ export const levelSlice = createSlice({
   name: "level",
   initialState,
   reducers: {
+    reset,
+    importLevel,
     createBlk,
     removeBlk,
     updateBlk,

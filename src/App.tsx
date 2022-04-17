@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Layout, Menu, PageHeader } from "antd";
 import MenuBar from "./components/menubar";
 import MapEditor from "./components/map-editor";
@@ -21,7 +21,7 @@ function App() {
             <img src="/logo192.png" alt="logo" />
             <span>Parabox Editor</span>
           </div>
-          <MenuBar onItemTriggered={(key) => console.log(key)} />
+          <MenuBar />
         </Header>
         <Content className="main-div">
           <MapEditor />

@@ -1,14 +1,9 @@
-import { Button, Image, List, Menu, Radio, Space, Typography } from "antd";
+import { Button, Image, List, Radio, Space, Typography } from "antd";
 import "./brush-menu.css";
-import Icon, {
-  DeleteOutlined,
-  EditOutlined,
-  SelectOutlined,
-} from "@ant-design/icons";
+import Icon, { EditOutlined, SelectOutlined } from "@ant-design/icons";
 import { ReactComponent as WallSvg } from "./asset/wall-brush.svg";
 import { ReactComponent as PlayerSvg } from "./asset/player-brush.svg";
 import { ReactComponent as BoxSvg } from "./asset/box-brush.svg";
-import { ReactComponent as FloorSvg } from "./asset/floor-brush.svg";
 import { ReactComponent as PlayerFloorSvg } from "./asset/playerfloor-brush.svg";
 import { ReactComponent as EraserSvg } from "./asset/eraser-brush.svg";
 import { Brush, DEFAULT_BRUSH } from "../models/edit-ui/brush";
@@ -18,9 +13,9 @@ import { PropsWithChildren } from "react";
 const SIMPLE_BRUSHES: [Brush, JSX.Element][] = [
   [DEFAULT_BRUSH.select, <SelectOutlined />],
   [DEFAULT_BRUSH.erase, <Icon component={EraserSvg} />],
-  [DEFAULT_BRUSH.player, <Icon component={PlayerSvg} />],
   [DEFAULT_BRUSH.wall, <Icon component={WallSvg} />],
   [DEFAULT_BRUSH.box, <Icon component={BoxSvg} />],
+  [DEFAULT_BRUSH.player, <Icon component={PlayerSvg} />],
   [DEFAULT_BRUSH.floor, <Icon component={PlayerFloorSvg} />],
 ];
 
@@ -41,7 +36,7 @@ export default function BrushMenu(props: {}) {
       ></List>
       <List
         id="ref-brushes"
-        dataSource={[1, 2, 3]}
+        dataSource={[...Array(20)].map((v, i) => i)}
         renderItem={(id) => (
           <BlockBrushRadio
             block={{
@@ -53,6 +48,7 @@ export default function BrushMenu(props: {}) {
               zoomFactor: 1,
               fillWithWalls: false,
               floatInSpace: false,
+              specialEffect: 0,
               grid: [],
             }}
           />

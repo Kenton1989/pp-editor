@@ -15,6 +15,7 @@ export interface BlockState {
   zoomFactor: number;
   fillWithWalls: boolean;
   floatInSpace: boolean;
+  specialEffect: number;
   grid: Grid;
 }
 

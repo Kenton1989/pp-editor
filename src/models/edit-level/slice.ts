@@ -11,8 +11,8 @@ import { Cell, Grid } from "./cell";
 import { importLevelState } from "./io";
 import { DEFAULT_HEADER } from "../../game-level-file/v4/const";
 
-function genBlockId(): number {
-  return Date.now();
+function genBlockId(state: LevelState): number {
+  return state.counter++;
 }
 
 function getBlockIdx(blocks: BlockState[], id: number): number {
@@ -81,9 +81,10 @@ function importLevel(
 
 function createBlk(state: LevelState) {
   console.log("create new block");
+  let id = genBlockId(state);
   let newBlk: BlockState = {
-    id: genBlockId(),
-    name: `Block ${state.counter++}`,
+    id: id,
+    name: `Block ${id}`,
     width: 7,
     height: 7,
     hsl: [0, 0, 0],

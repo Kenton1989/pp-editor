@@ -22,7 +22,7 @@ export function importLevelState(
   blkList.sort((a, b) => a.id - b.id);
 
   if (blkList.length > 0) {
-    res.counter = blkList[blkList.length - 1].id;
+    res.counter = blkList[blkList.length - 1].id + 1;
   }
 
   for (const blk of blkList) {
@@ -40,7 +40,7 @@ export function exportLevelState(level: LevelState): LevelRoot {
     children: [],
   };
   let cnt = level.counter;
-  let genId = () => ++cnt;
+  let genId = () => cnt++;
 
   for (const blk of level.blocks) {
     res.children.push(exportBlock(blk, genId));

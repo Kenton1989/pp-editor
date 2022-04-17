@@ -1,15 +1,21 @@
-import { Menu, MenuProps } from "antd";
+import { Menu, MenuProps, message } from "antd";
+// import { Validator } from "jsonschema";
 import { useCallback } from "react";
 import Hotkeys from "react-hot-keys";
 import { useDispatch } from "react-redux";
+import { ActionCreators } from "redux-undo";
 import { useAppSelector } from "../app/hook";
-import { outputLevelFile } from "../game-level-file";
+import { inputLevelFile, outputLevelFile } from "../game-level-file";
 import { LEVEL } from "../models/edit-level";
-import { exportLevelState } from "../models/edit-level/io";
+import { exportLevelState, importLevelState } from "../models/edit-level/io";
+import levelStateSchema from "../models/edit-level/level-state-schema";
+import { LevelState } from "../models/edit-level/state";
 import { inputTxtFile, outputTxtFile } from "../text-io";
 import "./menubar.css";
+import Ajv from "ajv";
 
 const { SubMenu } = Menu;
+const MAX_FILE_SIZE = 1 << 20; // 1mb;
 
 export default function MenuBar(props: MenuProps) {
   const { ...otherProps } = props;
@@ -25,9 +31,10 @@ export default function MenuBar(props: MenuProps) {
 
   function makeItem(key: keyof typeof ID) {
     let shortCut = SHORTCUT[key];
+    let title = TITLE[key];
     return (
       <Menu.Item key={key}>
-        {key}{" "}
+        {title ?? key}
         {shortCut && (
           <Hotkeys keyName={shortCut} onKeyDown={() => handleAction(key)}>
             <span className="action-item-shortcut">{shortCut}</span>
@@ -42,8 +49,8 @@ export default function MenuBar(props: MenuProps) {
       <SubMenu key="file" title="File">
         {makeItem("new")}
         {makeItem("open")}
-        {makeItem("import")}
         {makeItem("save")}
+        {makeItem("import")}
         {makeItem("export")}
       </SubMenu>
       <SubMenu key="edit" title="Edit">
@@ -62,6 +69,13 @@ const ID = {
   redo: "redo",
   import: "import",
   export: "export",
+};
+
+const TITLE: { [k: string]: string } = {
+  open: "open .json",
+  save: "save .json",
+  import: "import .txt",
+  export: "export .txt",
 };
 
 const SHORTCUT: { [k: string]: string } =
@@ -86,25 +100,46 @@ function useActionHandler(): (name: string) => any {
   let cb = useCallback(
     async (name: string) => {
       console.log(name);
-      if (name === ID.save) {
-        let root = exportLevelState(levelState);
-        await outputLevelFile(root, levelState.header.title);
-      } else if (name === ID.export) {
+      if (name === ID.undo) {
+        dispatch(ActionCreators.undo());
+      } else if (name === ID.redo) {
+        dispatch(ActionCreators.redo());
+      } else if (name === ID.save) {
         let s = JSON.stringify(levelState);
         await outputTxtFile(s, levelState.header.title, "application/json");
+      } else if (name === ID.export) {
+        let root = exportLevelState(levelState);
+        await outputLevelFile(root, levelState.header.title);
       } else if (name === ID.new) {
         dispatch(LEVEL.reset());
       } else if (name === ID.open) {
-        await inputTxtFile("application/json");
+        let state = await openLevelStateFile();
+        dispatch(LEVEL.reset(state));
+      } else if (name === ID.import) {
+        let [raw, title] = await inputLevelFile();
+        let state = importLevelState(raw, title);
+        dispatch(LEVEL.reset(state));
       }
-
-      // open: "open",
-      // save: "save",
-      // undo: "undo",
-      // redo: "redo",
-      // export: "export",
     },
     [dispatch, levelState]
   );
   return cb;
+}
+
+let ajv = new Ajv();
+let levelStateValidate = ajv.compile(levelStateSchema);
+
+async function openLevelStateFile(): Promise<LevelState> {
+  let [s] = await inputTxtFile("application/json", MAX_FILE_SIZE);
+  let state;
+  try {
+    state = JSON.parse(s);
+  } catch (e) {
+    console.error(e);
+    message.error("invalid file format");
+  }
+  if (!levelStateValidate(state)) {
+    message.error("invalid file format");
+  }
+  return state as LevelState;
 }

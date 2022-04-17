@@ -1,4 +1,4 @@
-import { Button, Image, List, Radio, Space, Typography } from "antd";
+import { Button, List, Radio, Space } from "antd";
 import "./brush-menu.css";
 import Icon, { EditOutlined, SelectOutlined } from "@ant-design/icons";
 import { ReactComponent as WallSvg } from "./asset/wall-brush.svg";
@@ -9,6 +9,9 @@ import { ReactComponent as EraserSvg } from "./asset/eraser-brush.svg";
 import { Brush, DEFAULT_BRUSH } from "../models/edit-ui/brush";
 import { BlockState } from "../models/edit-level/state";
 import { PropsWithChildren } from "react";
+import { toHslStr } from "../models/edit-level/color";
+import { useAppDispatch, useAppSelector } from "../app/hook";
+import { LEVEL } from "../models/edit-level";
 
 const SIMPLE_BRUSHES: [Brush, JSX.Element][] = [
   [DEFAULT_BRUSH.select, <SelectOutlined />],
@@ -20,6 +23,9 @@ const SIMPLE_BRUSHES: [Brush, JSX.Element][] = [
 ];
 
 export default function BrushMenu(props: {}) {
+  let blocks = useAppSelector((state) => state.level.present.blocks);
+  let dispatch = useAppDispatch();
+
   return (
     <Radio.Group
       className="brush-menu"
@@ -36,26 +42,13 @@ export default function BrushMenu(props: {}) {
       ></List>
       <List
         id="ref-brushes"
-        dataSource={[...Array(20)].map((v, i) => i)}
-        renderItem={(id) => (
-          <BlockBrushRadio
-            block={{
-              id: id,
-              name: `Block ${id}`,
-              width: 0,
-              height: 0,
-              hsl: "box",
-              zoomFactor: 1,
-              fillWithWalls: false,
-              floatInSpace: false,
-              specialEffect: 0,
-              grid: [],
-            }}
-          />
-        )}
+        dataSource={blocks}
+        renderItem={(blk) => <BlockBrushRadio block={blk} />}
         footer={
           <Space align="center" direction="vertical">
-            <Button size="large">+ New Block</Button>
+            <Button size="large" onClick={() => dispatch(LEVEL.createBlk())}>
+              + New Block
+            </Button>
           </Space>
         }
       ></List>
@@ -72,21 +65,24 @@ function SimpleBrushRadio(props: PropsWithChildren<{ brush: Brush }>) {
   );
 }
 
-let Text = Typography.Text;
-
 function BlockBrushRadio(props: { block: BlockState }) {
   let { block } = props;
+  let curBlk = useAppSelector((state) => state.ui.editingBlk);
   return (
     <Radio.Button value={block.id} className="block-radio">
       <div className="block-radio-content">
-        <Image
-          src="/logo192.png"
-          alt="logo"
+        <span
           className="block-preview"
-          preview={false}
-        />
-        <Text className="block-name">{block.name}</Text>
-        <Button className="block-edit-btn" size="small">
+          style={{ backgroundColor: toHslStr(block.hsl) }}
+        >
+          {block.id}
+        </span>
+        <span className="block-name">{block.name}</span>
+        <Button
+          className="block-edit-btn"
+          size="small"
+          disabled={curBlk === block.id}
+        >
           <EditOutlined />
         </Button>
       </div>

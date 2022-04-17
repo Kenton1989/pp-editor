@@ -22,14 +22,17 @@ export async function inputTxtFile(
 ): Promise<[string, string]> {
   let el = fileInputElement();
   el.accept = fileType;
+  let listener: (e: Event) => any;
 
-  return new Promise((resolve, reject) => {
-    el.onchange = (e) => {
+  return new Promise<[string, string]>((resolve, reject) => {
+    listener = (e) => {
       e.preventDefault();
 
       let inputEle = e.target as HTMLInputElement;
 
-      if (!inputEle.files || inputEle.files.length === 0) return;
+      if (!inputEle.files || inputEle.files.length === 0) {
+        reject(new Error("no file are selected"));
+      }
       let file = (inputEle.files as FileList)[0];
 
       if (file.size > maxSize) {
@@ -44,7 +47,12 @@ export async function inputTxtFile(
       };
       reader.readAsText(file);
     };
+    el.onchange = listener;
     el.click();
+  }).finally(() => {
+    el.removeEventListener("change", listener);
+    fileInputElement().files = null;
+    fileInputElement().value = "";
   });
 }
 

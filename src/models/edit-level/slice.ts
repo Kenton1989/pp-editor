@@ -87,7 +87,7 @@ function createBlk(state: LevelState) {
     name: `Block ${id}`,
     width: 7,
     height: 7,
-    hsl: [0, 0, 0],
+    hsl: "root block",
     zoomFactor: 1,
     fillWithWalls: false,
     floatInSpace: false,

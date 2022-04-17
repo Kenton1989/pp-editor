@@ -1,8 +1,26 @@
-import { HeaderState, Block } from "./types";
+import { RawLevelHeader } from "../../game-level-file/v4/types";
+import { Grid } from "./cell";
+import { HslColor } from "./color";
+
+export interface HeaderState extends RawLevelHeader {
+  title: string;
+}
+
+export interface BlockState {
+  id: number;
+  name: string;
+  width: number;
+  height: number;
+  hsl: HslColor;
+  zoomFactor: number;
+  fillWithWalls: boolean;
+  floatInSpace: boolean;
+  grid: Grid;
+}
 
 export interface LevelState {
   header: HeaderState;
-  blocks: Block[];
+  blocks: BlockState[];
   counter: number;
 }
 

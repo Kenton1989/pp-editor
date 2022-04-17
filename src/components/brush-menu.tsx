@@ -14,11 +14,10 @@ export default function BrushMenu(props: {}) {
     .map((v, i) => ({
       key: i,
     }));
-  console.log(list);
   return (
     <div className="brush-menu">
       <Menu
-        mode="vertical"
+        mode="inline"
         defaultSelectedKeys={[]}
         inlineCollapsed
         id="simple-brushes"

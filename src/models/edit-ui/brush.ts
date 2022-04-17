@@ -4,7 +4,7 @@ import {
   FloorCell,
   SimplePlayerCell,
   BoxCell,
-} from "../edit-level/types";
+} from "../edit-level/cell";
 
 type FromCell<T> = Omit<T, "cellType" | "x" | "y">;
 

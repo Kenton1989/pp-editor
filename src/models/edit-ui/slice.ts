@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { FloorType } from "../../game-level-file/v4/types";
-import { HslColor } from "../edit-level/types";
+import { HslColor } from "../edit-level/color";
 import { Brush } from "./brush";
 import { initialState, UiState } from "./state";
 

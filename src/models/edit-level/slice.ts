@@ -1,26 +1,26 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Cell, Block, Grid } from "./types";
-import { LevelState, initialState } from "./state";
+import { LevelState, initialState, BlockState } from "./state";
 import {
   AttemptOrder,
   DrawStyle,
   FloorType,
   isAttemptOrder,
 } from "../../game-level-file/v4/types";
+import { Cell, Grid } from "./cell";
 
 function genBlockId(): number {
   return Date.now();
 }
 
-function getBlockIdx(blocks: Block[], id: number): number {
+function getBlockIdx(blocks: BlockState[], id: number): number {
   return blocks.findIndex((val) => val.id === id);
 }
 
-function getBlock(blocks: Block[], id: number): Block | undefined {
+function getBlock(blocks: BlockState[], id: number): BlockState | undefined {
   return blocks.find((val) => val.id === id);
 }
 
-function validPos(blk: Block, x: number, y: number) {
+function validPos(blk: BlockState, x: number, y: number) {
   return x < blk.width && y < blk.height && x >= 0 && y >= 0;
 }
 
@@ -29,7 +29,7 @@ function getCell(
   blkId: number,
   x: number,
   y: number
-): [boolean, Block?, Cell?] {
+): [boolean, BlockState?, Cell?] {
   let blk = getBlock(state.blocks, blkId);
   if (blk === undefined || !validPos(blk, x, y)) {
     return [false, undefined, undefined];
@@ -56,7 +56,7 @@ function makeGrid(width: number, height: number, oldGrid: Grid = []): Cell[][] {
 
 function createBlk(state: LevelState) {
   console.log("create new block");
-  let newBlk: Block = {
+  let newBlk: BlockState = {
     id: genBlockId(),
     name: `Block ${state.counter++}`,
     width: 7,

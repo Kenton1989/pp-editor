@@ -1,13 +1,14 @@
-import { Block, Cell } from "../models/edit-level/types";
+import { Cell } from "../models/edit-level/cell";
+import { BlockState } from "../models/edit-level/state";
 import { RootState } from "./store";
 
-export function currentBlock(state: RootState): Block | undefined {
+export function currentBlock(state: RootState): BlockState | undefined {
   return state.level.present.blocks.find(
     (val) => val.id === state.ui.editingBlk
   );
 }
 
-export function currentCell(state: RootState): [Block?, Cell?] {
+export function currentCell(state: RootState): [BlockState?, Cell?] {
   let blk = currentBlock(state);
   if (blk === undefined) return [undefined, undefined];
 

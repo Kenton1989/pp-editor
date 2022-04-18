@@ -4,13 +4,16 @@ import { HslColor } from "../edit-level/color";
 import { Brush } from "./brush";
 import { initialState, UiState } from "./state";
 
-function selectBlk(state: UiState, action: PayloadAction<number>) {
+function selectBlk(state: UiState, action: PayloadAction<number | undefined>) {
   let blkId = action.payload;
   state.editingBlk = blkId;
   state.editingCell = undefined;
 }
 
-function selectCell(state: UiState, action: PayloadAction<[number, number]>) {
+function selectCell(
+  state: UiState,
+  action: PayloadAction<[number, number] | undefined>
+) {
   let pos = action.payload;
   state.editingCell = pos;
 }

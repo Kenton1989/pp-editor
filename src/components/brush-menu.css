@@ -58,3 +58,6 @@
   height: 50px;
   width: 50px;
 }
+.block-radio .block-name {
+  text-align: center;
+}

@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 import { Cell } from "../models/edit-level/cell";
-import { BlockState } from "../models/edit-level/state";
+import { BlockState, LevelState } from "../models/edit-level/state";
+import { useAppSelector } from "./hook";
 import { RootState } from "./store";
 
 export function currentBlock(state: RootState): BlockState | undefined {
@@ -8,15 +10,46 @@ export function currentBlock(state: RootState): BlockState | undefined {
   );
 }
 
-export function currentCell(state: RootState): [BlockState?, Cell?] {
-  let blk = currentBlock(state);
-  if (blk === undefined) return [undefined, undefined];
+export function useLevel(): LevelState {
+  return useAppSelector((state) => state.level.present);
+}
 
-  let pos = state.ui.editingCell;
-  let cell: Cell | undefined = undefined;
-  if (pos !== undefined) {
-    cell = blk.grid[pos[0]][pos[1]];
-  }
+export function useBlockList(): BlockState[] {
+  return useAppSelector((state) => state.level.present.blocks);
+}
 
-  return [blk, cell];
+export function useBlockMap(): Map<BlockState["id"], BlockState> {
+  let blkList = useBlockList();
+  return useMemo(() => new Map(blkList.map((blk) => [blk.id, blk])), [blkList]);
+}
+
+export function useCurrentBlk(): BlockState | undefined {
+  let blkMap = useBlockMap();
+  let id = useAppSelector((state) => state.ui.editingBlk);
+  if (id === undefined) return undefined;
+  return blkMap.get(id);
+}
+
+export function useCurrentCell(): [BlockState?, Cell?] {
+  let blkMap = useBlockMap();
+
+  let [id, pos] = useAppSelector((state) => [
+    state.ui.editingBlk,
+    state.ui.editingCell,
+  ]);
+
+  return useMemo((): [BlockState?, Cell?] => {
+    if (id === undefined) return [undefined, undefined];
+
+    let blk = blkMap.get(id);
+    if (blk === undefined) return [undefined, undefined];
+
+    if (pos === undefined) return [blk, undefined];
+
+    let [x, y] = pos;
+    if (x >= blk.width || y >= blk.height || x < 0 || y < 0) {
+      return [blk, undefined];
+    }
+    return [blk, blk.grid[x][y]];
+  }, [blkMap, id, pos]);
 }

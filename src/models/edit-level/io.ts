@@ -1,6 +1,13 @@
 import { LevelRoot, RawBlock, RawRef } from "../../game-level-file/v4/types";
 import { BlockState, LevelState } from "./state";
-import { BoxCell, FloorCell, Grid, SimplePlayerCell, WallCell } from "./cell";
+import {
+  BoxCell,
+  FloorCell,
+  Grid,
+  RefCell,
+  SimplePlayerCell,
+  WallCell,
+} from "./cell";
 import { fromRawColor, toRawLevelColor } from "./color";
 
 export function importLevelState(
@@ -26,6 +33,7 @@ export function importLevelState(
   }
 
   for (const blk of blkList) {
+    if (isSimpleSolid(blk)) continue;
     res.blocks.push(importBlock(blk, blkMap));
   }
 
@@ -121,6 +129,9 @@ function importBlock(
       newBlk.grid[b.x][b.y] = b;
       continue;
     }
+
+    let r = makeRef(refSrc, ref);
+    newBlk.grid[r.x][r.y] = r;
   }
   return newBlk;
 }
@@ -170,6 +181,38 @@ function exportBlock(blk: BlockState, genId: () => number): RawBlock {
 
 function makeGrid(w: number, h: number): Grid {
   return [...Array(w)].map(() => [...Array(h)]);
+}
+
+function makeRef(blk: RawBlock, ref?: RawRef): RefCell {
+  let r = {
+    exitBlock: true,
+    infExit: false,
+    infExitNum: 0,
+    infEnter: false,
+    infEnterNum: 0,
+    infEnterId: 0,
+    ...blk,
+    ...ref,
+  };
+
+  return {
+    cellType: "Ref",
+    x: r.x,
+    y: r.y,
+    id: r.id,
+    exitBlock: r.exitBlock,
+    infExit: r.infExit,
+    infExitNum: r.infExitNum,
+    infEnter: r.infEnter,
+    infEnterNum: r.infEnterNum,
+    infEnterId: r.infEnterId,
+    player: r.player,
+    possessable: r.possessable,
+    playerOrder: r.playerOrder,
+    flipH: r.flipH,
+    floatInSpace: r.floatInSpace,
+    specialEffect: 0,
+  };
 }
 
 function makeSimplePlayer(
@@ -269,12 +312,9 @@ function isSimpleSolid(block: RawBlock, ref?: RawRef) {
     throw new ReferenceError("param ref is not a reference of the block");
   }
   return (
-    block.fillWithWalls === true &&
-    block.flipH === false &&
+    block.fillWithWalls &&
+    !block.flipH &&
     (ref === undefined ||
-      (ref.exitBlock === false &&
-        ref.flipH === false &&
-        ref.infEnter === false &&
-        ref.infExit === false))
+      (ref.exitBlock && !ref.flipH && !ref.infEnter && !ref.infExit))
   );
 }

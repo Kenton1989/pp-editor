@@ -9,9 +9,10 @@ import { ReactComponent as EraserSvg } from "./asset/eraser-brush.svg";
 import { Brush, DEFAULT_BRUSH } from "../models/edit-ui/brush";
 import { BlockState } from "../models/edit-level/state";
 import { PropsWithChildren } from "react";
-import { toHslStr } from "../models/edit-level/color";
 import { useAppDispatch, useAppSelector } from "../app/hook";
 import { LEVEL } from "../models/edit-level";
+import { BlockPreview } from "./block-preview";
+import { UI } from "../models/edit-ui";
 
 const SIMPLE_BRUSHES: [Brush, JSX.Element][] = [
   [DEFAULT_BRUSH.select, <SelectOutlined />],
@@ -68,20 +69,19 @@ function SimpleBrushRadio(props: PropsWithChildren<{ brush: Brush }>) {
 function BlockBrushRadio(props: { block: BlockState }) {
   let { block } = props;
   let curBlk = useAppSelector((state) => state.ui.editingBlk);
+  let dispatch = useAppDispatch();
   return (
     <Radio.Button value={block.id} className="block-radio">
       <div className="block-radio-content">
-        <span
-          className="block-preview"
-          style={{ backgroundColor: toHslStr(block.hsl) }}
-        >
-          {block.id}
-        </span>
+        <BlockPreview className="block-preview" block={block} />
         <span className="block-name">{block.name}</span>
         <Button
           className="block-edit-btn"
           size="small"
           disabled={curBlk === block.id}
+          onClick={() => {
+            dispatch(UI.selectBlk(block.id));
+          }}
         >
           <EditOutlined />
         </Button>

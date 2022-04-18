@@ -1,11 +1,13 @@
 import { Button, Input } from "antd";
 import { useState } from "react";
+import { useCurrentBlk } from "../app/selector";
 import { inputLevelFile, outputLevelFile } from "../game-level-file";
+import { BlockPreview } from "./block-preview";
 import "./map-editor.css";
 
 export default function MapEditor(props: {}) {
   const [txt, setTxt] = useState("");
-
+  const blk = useCurrentBlk();
   return (
     <div className="map-editor">
       <Input.TextArea onChange={(e) => setTxt(e.target.value)} value={txt} />
@@ -45,6 +47,7 @@ export default function MapEditor(props: {}) {
       >
         Format
       </Button>
+      <p>{blk && <BlockPreview block={blk} width={600} height={600} />}</p>
     </div>
   );
 }

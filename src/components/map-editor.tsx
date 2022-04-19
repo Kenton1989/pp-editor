@@ -1,8 +1,10 @@
 import { Button, Input } from "antd";
+import Color from "color";
 import { useState } from "react";
 import { useCurrentBlk } from "../app/selector";
 import { inputLevelFile, outputLevelFile } from "../game-level-file";
-import { BlockPreview } from "./block-preview";
+import { toHslArr } from "../models/edit-level/color";
+import { BlockCellPreview, BlockPreview } from "./block-preview";
 import "./map-editor.css";
 
 export default function MapEditor(props: {}) {
@@ -47,7 +49,29 @@ export default function MapEditor(props: {}) {
       >
         Format
       </Button>
-      <p>{blk && <BlockPreview block={blk} width={600} height={600} />}</p>
+      <p>
+        <BlockCellPreview
+          cell={{
+            cellType: "Ref",
+            x: 0,
+            y: 0,
+            id: 0,
+            exitBlock: true,
+            infExit: false,
+            infExitNum: 0,
+            infEnter: false,
+            infEnterNum: 0,
+            infEnterId: 0,
+            player: false,
+            possessable: false,
+            playerOrder: 0,
+            flipH: true,
+            floatInSpace: false,
+            specialEffect: 0,
+          }}
+          parentColor={Color.hsl(toHslArr("root block"))}
+        />
+      </p>
     </div>
   );
 }

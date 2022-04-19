@@ -28,15 +28,14 @@ export function importLevelState(
   let blkList = [...blkMap.values()];
   blkList.sort((a, b) => a.id - b.id);
 
-  if (blkList.length > 0) {
-    res.counter = blkList[blkList.length - 1].id + 1;
-  }
-
   for (const blk of blkList) {
     if (isSimpleSolid(blk)) continue;
     res.blocks.push(importBlock(blk, blkMap));
   }
 
+  if (res.blocks.length > 0) {
+    res.counter = res.blocks[res.blocks.length - 1].id + 1;
+  }
   return res;
 }
 

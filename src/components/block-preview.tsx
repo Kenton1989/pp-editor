@@ -2,11 +2,11 @@ import { PropsWithoutRef, useEffect, useRef } from "react";
 import { useBlockMap } from "../app/selector";
 import { BlockState } from "../models/edit-level/state";
 import { toHslArr } from "../models/edit-level/color";
-import { RefCell } from "../models/edit-level/cell";
+import { Cell, RefCell } from "../models/edit-level/cell";
 import Color from "color";
 
 const MAX_RECURSIVE_RENDER_LEVEL = 5;
-const [WIDTH, HEIGHT] = [300, 300];
+const [CANVAS_WIDTH, CANVAS_HEIGHT] = [300, 300];
 
 const [L_EYE_X_OFFEST, R_EYE_X_OFFSET, EYE_Y_OFFSET] = [0.3, 0.7, 0.45];
 const [EYE_RADIUS, PUPIL_RADIUS] = [0.08, 0.05];
@@ -21,7 +21,7 @@ const borderColor = (color: Color) => color.darken(0.7).string();
 const BORDER_WIDTH = 0.03;
 
 const INF_OVERLAY_COLOR = "rgba(0,0,0,0.4)";
-const CLONE_OVERLAY_COLOR = "rgba(255,255,255,0.2)";
+const CLONE_OVERLAY_COLOR = "rgba(255,255,255,0.4)";
 
 const floorColor = (color: Color) => color.darken(0.5).string();
 const FLOOR_OVERLAY_COLOR = "rgba(255,255,255,0.5)";
@@ -37,7 +37,7 @@ export function BlockPreview(
     height?: number;
   }>
 ): JSX.Element {
-  let { block, width = WIDTH, height = HEIGHT, ...other } = props;
+  let { block, width = CANVAS_WIDTH, height = CANVAS_HEIGHT, ...other } = props;
   let map = useBlockMap();
   let ref = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -50,14 +50,44 @@ export function BlockPreview(
   return <canvas ref={ref} width={width} height={height} {...other} />;
 }
 
+// simple cell = any cell except RefCell
+export function BlockCellPreview(
+  props: PropsWithoutRef<{
+    cell: Cell;
+    parentColor: Color;
+    width?: number;
+    height?: number;
+    className?: string;
+    style?: React.CSSProperties;
+  }>
+): JSX.Element {
+  let map = useBlockMap();
+  let {
+    cell,
+    parentColor: colorBase,
+    width = CANVAS_WIDTH,
+    height = CANVAS_HEIGHT,
+    ...other
+  } = props;
+  let ref = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    let canvas = ref.current;
+    if (canvas === null) return;
+    let ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+    renderCell(ctx, colorBase, cell, map, 0, 0, width, height);
+  }, [map, cell, colorBase, width, height]);
+
+  return <canvas ref={ref} width={width} height={height} {...other} />;
+}
+
 function renderBlock(
   ctx: CanvasRenderingContext2D,
   block: BlockState,
   map: Map<BlockState["id"], BlockState>,
   x0 = 0,
   y0 = 0,
-  w0 = WIDTH,
-  h0 = HEIGHT,
+  w0 = CANVAS_WIDTH,
+  h0 = CANVAS_HEIGHT,
   level = 0,
   flipH = false
 ) {
@@ -94,58 +124,70 @@ function renderBlock(
         y0 + (block.height - 1 - c) * cellH,
       ];
 
-      if (cell.cellType === "Ref") {
-        let refSrc = map.get(cell.id);
-        console.log(cell.id, cell, refSrc);
-        if (refSrc === undefined) return;
-        let flipRef = flipH !== cell.flipH;
-        renderBlock(ctx, refSrc, map, x, y, cellW, cellH, level + 1, flipRef);
-        renderRefDetails(ctx, cell, refSrc, x, y, cellW, cellH, level + 1);
-        let borderClr = borderColor(Color.hsl(toHslArr(refSrc.hsl)));
-        drawBorder(ctx, borderClr, x, y, cellW, cellH);
-        return;
-      }
-
-      if (cell.cellType === "Floor") {
-        let [dx, dy] = [
-          cellW * FLOOR_BORDER_PADDING,
-          cellH * FLOOR_BORDER_PADDING,
-        ];
-        ctx.fillStyle = FLOOR_OVERLAY_COLOR;
-        ctx.fillRect(x + dx, y + dy, cellW - 2 * dx, cellH - 2 * dy);
-
-        [dx, dy] = [
-          dx + cellW * FLOOR_BORDER_WIDTH,
-          dy + cellH * FLOOR_BORDER_WIDTH,
-        ];
-        ctx.fillStyle = floorClr;
-        ctx.fillRect(x + dx, y + dy, cellW - 2 * dx, cellH - 2 * dy);
-
-        if (cell.floorType === "PlayerButton") {
-          drawEyes(ctx, FLOOR_OVERLAY_COLOR, x, y, cellW, cellH);
-        }
-        return;
-      }
-
-      if (cell.cellType === "Wall") {
-        let color = wallColor(colorBase);
-        renderWall(ctx, color, x, y, cellW, cellH);
-        return;
-      }
-
-      if (cell.cellType === "SimplePlayer" || cell.cellType === "Box") {
-        let color = Color.hsl(toHslArr(cell.hsl));
-        ctx.fillStyle = color.string();
-        ctx.fillRect(x, y, cellW, cellH);
-        let borderClr = borderColor(color);
-        drawBorder(ctx, borderClr, x, y, cellW, cellH);
-        if (cell.cellType === "SimplePlayer") {
-          drawEyes(ctx, eyeColor(color), x, y, cellW, cellH, cell.player);
-        }
-        return;
-      }
+      renderCell(ctx, colorBase, cell, map, x, y, cellW, cellH, level, flipH);
     });
   });
+}
+
+function renderCell(
+  ctx: CanvasRenderingContext2D,
+  colorBase: Color,
+  cell: Cell,
+  map: Map<BlockState["id"], BlockState>,
+  x0: number,
+  y0: number,
+  w0: number,
+  h0: number,
+  parentLevel = 0,
+  parentFlipH = false
+) {
+  if (cell.cellType === "Ref") {
+    let refSrc = map.get(cell.id);
+    if (refSrc === undefined) return;
+    let flipRef = parentFlipH !== cell.flipH;
+    renderBlock(ctx, refSrc, map, x0, y0, w0, h0, parentLevel + 1, flipRef);
+    let borderClr = borderColor(Color.hsl(toHslArr(refSrc.hsl)));
+    drawBorder(ctx, borderClr, x0, y0, w0, h0);
+    renderRefDetails(ctx, cell, refSrc, x0, y0, w0, h0, parentLevel + 1);
+    return;
+  }
+
+  if (cell.cellType === "Floor") {
+    let [dx, dy] = [w0 * FLOOR_BORDER_PADDING, h0 * FLOOR_BORDER_PADDING];
+    ctx.fillStyle = FLOOR_OVERLAY_COLOR;
+    ctx.fillRect(x0 + dx, y0 + dy, w0 - 2 * dx, h0 - 2 * dy);
+
+    [dx, dy] = [dx + w0 * FLOOR_BORDER_WIDTH, dy + h0 * FLOOR_BORDER_WIDTH];
+    ctx.fillStyle = floorColor(colorBase);
+    ctx.fillRect(x0 + dx, y0 + dy, w0 - 2 * dx, h0 - 2 * dy);
+
+    if (cell.floorType === "PlayerButton") {
+      drawEyes(ctx, FLOOR_OVERLAY_COLOR, x0, y0, w0, h0);
+    }
+    return;
+  }
+
+  if (cell.cellType === "Wall") {
+    let color = wallColor(colorBase);
+    renderWall(ctx, color, x0, y0, w0, h0);
+    return;
+  }
+
+  if (cell.cellType === "SimplePlayer" || cell.cellType === "Box") {
+    let color = Color.hsl(toHslArr(cell.hsl));
+    ctx.fillStyle = color.string();
+    ctx.fillRect(x0, y0, w0, h0);
+    let borderClr = borderColor(color);
+    drawBorder(ctx, borderClr, x0, y0, w0, h0);
+    if (cell.cellType === "SimplePlayer") {
+      if (cell.player) {
+        drawEyes(ctx, eyeColor(color), x0, y0, w0, h0, true);
+      } else if (cell.possessable) {
+        drawEyes(ctx, eyeColor(color), x0, y0, w0, h0, false);
+      }
+    }
+    return;
+  }
 }
 
 function renderRefDetails(

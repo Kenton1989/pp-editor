@@ -30,6 +30,11 @@ export function useCurrentBlk(): BlockState | undefined {
   return blkMap.get(id);
 }
 
+export function useBlock(id: number): BlockState | undefined {
+  let blkMap = useBlockMap();
+  return blkMap.get(id);
+}
+
 export function useCurrentCell(): [BlockState?, Cell?] {
   let blkMap = useBlockMap();
 

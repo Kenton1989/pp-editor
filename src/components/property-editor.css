@@ -1,0 +1,18 @@
+.property-editor {
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: stretch;
+
+  border-left: 2px solid lightgray;
+}
+.property-editor .block-property {
+  padding: 0px 16px;
+  overflow-y: scroll;
+  flex-grow: 1;
+}
+
+.property-editor .property-row {
+  margin-top: 8px;
+}

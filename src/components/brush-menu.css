@@ -1,6 +1,7 @@
 .brush-menu {
   display: flex;
   align-items: stretch;
+  border-left: 2px solid lightgray;
 }
 
 #simple-brushes {
@@ -60,4 +61,5 @@
 }
 .block-radio .block-name {
   text-align: center;
+  font-size: medium;
 }

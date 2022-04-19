@@ -36,7 +36,11 @@ export default function MenuBar(props: MenuProps) {
       <Menu.Item key={key}>
         {title ?? key}
         {shortCut && (
-          <Hotkeys keyName={shortCut} onKeyDown={() => handleAction(key)}>
+          <Hotkeys
+            keyName={shortCut}
+            onKeyDown={() => handleAction(key)}
+            allowRepeat
+          >
             <span className="action-item-shortcut">{shortCut}</span>
           </Hotkeys>
         )}

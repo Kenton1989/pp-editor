@@ -103,13 +103,14 @@ function removeBlk(state: LevelState, action: PayloadAction<number>) {
   state.blocks = state.blocks.filter((val) => val.id !== deletedBlkId);
 }
 
-interface BlockEdit {
+export interface BlockEdit {
   id: number; // used for searching block
   name?: string;
   hsl?: [number, number, number];
   zoomFactor?: number;
   fillWithWalls?: boolean;
   floatInSpace?: boolean;
+  specialEffect?: number;
 }
 
 function updateBlk(state: LevelState, action: PayloadAction<BlockEdit>) {
@@ -200,7 +201,7 @@ function moveCell(
   blk!.grid[x2][y2] = newCell;
 }
 
-interface CellEdit {
+export interface CellEdit {
   blkId: number;
   x: number; // to locate cell
   y: number; // to locate cell
@@ -234,7 +235,7 @@ function updateCell(state: LevelState, action: PayloadAction<CellEdit>) {
   }
 }
 
-interface HeaderEdit {
+export interface HeaderEdit {
   title?: string;
   attemptOrder?: AttemptOrder;
   shed?: boolean;

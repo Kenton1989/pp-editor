@@ -10,6 +10,7 @@ import "./map-editor.css";
 export default function MapEditor(props: {}) {
   const [txt, setTxt] = useState("");
   const blk = useCurrentBlk();
+
   return (
     <div className="map-editor">
       <Input.TextArea onChange={(e) => setTxt(e.target.value)} value={txt} />
@@ -55,7 +56,7 @@ export default function MapEditor(props: {}) {
             cellType: "Ref",
             x: 0,
             y: 0,
-            id: 0,
+            id: 1,
             exitBlock: true,
             infExit: false,
             infExitNum: 0,

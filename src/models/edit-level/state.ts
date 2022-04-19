@@ -37,5 +37,5 @@ export const initialState: LevelState = {
     customLevelPalette: -1,
   },
   blocks: [],
-  counter: 1,
+  counter: 0,
 };

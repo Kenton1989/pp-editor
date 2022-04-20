@@ -18,7 +18,8 @@ export const BORDER_WIDTH = 0.03;
 export const INF_OVERLAY_COLOR = "rgba(0,0,0,0.4)";
 export const CLONE_OVERLAY_COLOR = "rgba(255,255,255,0.4)";
 
-export const floorColor = (color: Color) => color.darken(0.5).string();
+export const floorColor = (color: Color) =>
+  color.darken(0.5).desaturate(0.33).string();
 
 export const TARGET_FLOOR_OVERLAY_COLOR = "rgba(255,255,255,0.5)";
 export const TARGET_FLOOR_BORDER_PADDING = 0.06;

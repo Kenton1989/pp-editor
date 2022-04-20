@@ -46,24 +46,25 @@
   bottom: 0;
   right: 0;
 
-  width: 100%;
-  height: 100%;
-
-  transition-property: transform;
+  transition-property: transform, border;
   transition-duration: 0.1s;
+
+  z-index: 3;
 }
 
-#map-editor .selected {
-  transform: scale(1.1);
-  z-index: 10;
+#map-editor .map-block canvas {
+  width: 100%;
+  height: 100%;
 }
 
 #map-editor .selectable:hover {
-  transform: scale(1.1);
+  transform: scale(1.2);
+  border: 4px solid #1890ff;
   z-index: 10;
 }
 
-#map-editor .selectable:active {
-  transform: scale(1.05);
-  z-index: 10;
+#map-editor .selectable.selected {
+  transform: scale(1.2);
+  border: 4px solid yellow;
+  z-index: 6;
 }

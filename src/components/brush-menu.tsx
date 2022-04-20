@@ -71,6 +71,7 @@ function BlockBrushRadio(props: { block: BlockState }) {
   let { block } = props;
   let curBlk = useCurrentBlk();
   let dispatch = useAppDispatch();
+  let selected = curBlk && curBlk.id === block.id;
   return (
     <Radio.Button value={block.id} className="block-radio">
       <div className="block-radio-content">
@@ -79,7 +80,7 @@ function BlockBrushRadio(props: { block: BlockState }) {
         <Button
           className="block-edit-btn"
           size="small"
-          disabled={curBlk && curBlk.id === block.id}
+          type={selected ? "primary" : "default"}
           onClick={() => {
             dispatch(UI.selectBlk(block.id));
           }}

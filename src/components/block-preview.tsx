@@ -158,7 +158,7 @@ function renderCell(
     ];
     let floorClr = floorColor(colorBase);
     ctx.fillStyle = floorClr;
-    ctx.fillRect(x0 + dx, y0 + dy, w0 - 2 * dx, h0 - 2 * dy);
+    ctx.fillRect(x0, y0, w0, h0);
     ctx.fillStyle = TARGET_FLOOR_OVERLAY_COLOR;
     ctx.fillRect(x0 + dx, y0 + dy, w0 - 2 * dx, h0 - 2 * dy);
 

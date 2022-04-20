@@ -5,7 +5,7 @@ import undoable from "redux-undo";
 
 export const store = configureStore({
   reducer: {
-    [levelSlice.name]: undoable(levelSlice.reducer),
+    [levelSlice.name]: undoable(levelSlice.reducer, { limit: 500 }),
     [uiSlice.name]: uiSlice.reducer,
   },
 });

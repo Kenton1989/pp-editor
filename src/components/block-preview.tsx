@@ -4,29 +4,29 @@ import { BlockState } from "../models/edit-level/state";
 import { toHslArr } from "../models/edit-level/color";
 import { Cell, RefCell } from "../models/edit-level/cell";
 import Color from "color";
-
-const MAX_RECURSIVE_RENDER_LEVEL = 5;
-const [CANVAS_WIDTH, CANVAS_HEIGHT] = [300, 300];
-
-const [L_EYE_X_OFFEST, R_EYE_X_OFFSET, EYE_Y_OFFSET] = [0.3, 0.7, 0.45];
-const [EYE_RADIUS, PUPIL_RADIUS] = [0.08, 0.05];
-const eyeColor = (color: Color) => color.darken(0.7).string();
-
-const wallColor = (color: Color) => color.string();
-const WALL_LIGHT_OVERLAY = "rgba(255,255,255,0.6)";
-const WALL_SHADE_OVERLAY = "rgba(0,0,0,0.6)";
-const WALL_CENTER_WIDTH = 0.5;
-
-const borderColor = (color: Color) => color.darken(0.7).string();
-const BORDER_WIDTH = 0.03;
-
-const INF_OVERLAY_COLOR = "rgba(0,0,0,0.4)";
-const CLONE_OVERLAY_COLOR = "rgba(255,255,255,0.4)";
-
-const floorColor = (color: Color) => color.darken(0.5).string();
-const FLOOR_OVERLAY_COLOR = "rgba(255,255,255,0.5)";
-const FLOOR_BORDER_PADDING = 0.06;
-const FLOOR_BORDER_WIDTH = 0.07;
+import {
+  borderColor,
+  BORDER_WIDTH,
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  CLONE_OVERLAY_COLOR,
+  eyeColor,
+  EYE_RADIUS,
+  EYE_Y_OFFSET,
+  floorColor,
+  INF_OVERLAY_COLOR,
+  L_EYE_X_OFFEST,
+  MAX_RECURSIVE_RENDER_LEVEL,
+  PUPIL_RADIUS,
+  R_EYE_X_OFFSET,
+  TARGET_FLOOR_BORDER_PADDING,
+  TARGET_FLOOR_BORDER_WIDTH,
+  TARGET_FLOOR_OVERLAY_COLOR,
+  wallColor,
+  WALL_CENTER_WIDTH,
+  WALL_LIGHT_OVERLAY,
+  WALL_SHADE_OVERLAY,
+} from "./block-render-config";
 
 export function BlockPreview(
   props: PropsWithoutRef<{
@@ -105,14 +105,13 @@ function renderBlock(
     return;
   }
 
+  // draw floor
   let floorClr = floorColor(colorBase);
+  ctx.fillStyle = floorClr;
+  ctx.fillRect(x0, y0, w0, h0);
 
   let cellW = w0 / block.width;
   let cellH = h0 / block.height;
-
-  // draw floor
-  ctx.fillStyle = floorClr;
-  ctx.fillRect(x0, y0, w0, h0);
 
   // draw cells
   block.grid.forEach((row, r) => {
@@ -153,16 +152,25 @@ function renderCell(
   }
 
   if (cell.cellType === "Floor") {
-    let [dx, dy] = [w0 * FLOOR_BORDER_PADDING, h0 * FLOOR_BORDER_PADDING];
-    ctx.fillStyle = FLOOR_OVERLAY_COLOR;
+    let [dx, dy] = [
+      w0 * TARGET_FLOOR_BORDER_PADDING,
+      h0 * TARGET_FLOOR_BORDER_PADDING,
+    ];
+    let floorClr = floorColor(colorBase);
+    ctx.fillStyle = floorClr;
+    ctx.fillRect(x0 + dx, y0 + dy, w0 - 2 * dx, h0 - 2 * dy);
+    ctx.fillStyle = TARGET_FLOOR_OVERLAY_COLOR;
     ctx.fillRect(x0 + dx, y0 + dy, w0 - 2 * dx, h0 - 2 * dy);
 
-    [dx, dy] = [dx + w0 * FLOOR_BORDER_WIDTH, dy + h0 * FLOOR_BORDER_WIDTH];
-    ctx.fillStyle = floorColor(colorBase);
+    [dx, dy] = [
+      dx + w0 * TARGET_FLOOR_BORDER_WIDTH,
+      dy + h0 * TARGET_FLOOR_BORDER_WIDTH,
+    ];
+    ctx.fillStyle = floorClr;
     ctx.fillRect(x0 + dx, y0 + dy, w0 - 2 * dx, h0 - 2 * dy);
 
     if (cell.floorType === "PlayerButton") {
-      drawEyes(ctx, FLOOR_OVERLAY_COLOR, x0, y0, w0, h0);
+      drawEyes(ctx, TARGET_FLOOR_OVERLAY_COLOR, x0, y0, w0, h0);
     }
     return;
   }

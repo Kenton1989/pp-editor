@@ -1,5 +1,7 @@
+import Color from "color";
 import { useMemo } from "react";
 import { Cell } from "../models/edit-level/cell";
+import { HslColor, toHslArr } from "../models/edit-level/color";
 import { BlockState, LevelState } from "../models/edit-level/state";
 import { useAppSelector } from "./hook";
 import { RootState } from "./store";
@@ -33,6 +35,11 @@ export function useCurrentBlk(): BlockState | undefined {
 export function useBlock(id: number): BlockState | undefined {
   let blkMap = useBlockMap();
   return blkMap.get(id);
+}
+
+export function useBlockColor(blk: BlockState | undefined): Color {
+  let val: HslColor = blk ? blk.hsl : "root block";
+  return useMemo(() => Color.hsl(toHslArr(val)), [val]);
 }
 
 export function useCurrentCell(): [BlockState?, Cell?] {

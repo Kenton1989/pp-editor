@@ -1,0 +1,69 @@
+#map-editor {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#map-editor .map-grid {
+  display: inline-flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-direction: row;
+
+  max-height: 100%;
+  height: 80vh;
+  width: 80vh;
+
+  border: 1px solid black;
+  background-color: hsl(0, 0%, 45%);
+}
+
+#map-editor .map-axis {
+  flex-grow: 1;
+
+  display: inline-flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-direction: column-reverse;
+}
+
+#map-editor .map-cell {
+  flex-grow: 1;
+
+  display: block;
+
+  border: 1px solid black;
+
+  position: relative;
+}
+
+#map-editor .map-block {
+  background-color: inherit;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  width: 100%;
+  height: 100%;
+
+  transition-property: transform;
+  transition-duration: 0.1s;
+}
+
+#map-editor .selected {
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+#map-editor .selectable:hover {
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+#map-editor .selectable:active {
+  transform: scale(1.05);
+  z-index: 10;
+}

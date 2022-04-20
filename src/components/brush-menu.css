@@ -29,24 +29,24 @@
   width: 100%;
 }
 
-.simple-radio {
+#simple-brushes .simple-radio {
   width: 100%;
   height: 2em;
   font-size: x-large;
-  border-width: 0;
+  border: 0 solid black;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.block-radio {
+#ref-brushes .block-radio {
   width: 100%;
   height: 80px;
   border-width: 0;
   border-bottom: 1px solid #eee;
 }
 
-.block-radio-content {
+#ref-brushes .block-radio-content {
   width: 100%;
   height: 80px;
   display: flex;
@@ -54,12 +54,12 @@
   justify-content: space-between;
 }
 
-.block-radio .block-preview {
+#ref-brushes .block-radio .block-preview {
   display: inline-block;
   height: 50px;
   width: 50px;
 }
-.block-radio .block-name {
+#ref-brushes .block-radio .block-name {
   text-align: center;
   font-size: medium;
 }

@@ -10,6 +10,7 @@ import {
 import { Cell, Grid } from "./cell";
 import { importLevelState } from "./io";
 import { DEFAULT_HEADER } from "../../game-level-file/v4/const";
+import { HslColor } from "./color";
 
 function genBlockId(state: LevelState): number {
   return state.counter++;
@@ -106,7 +107,7 @@ function removeBlk(state: LevelState, action: PayloadAction<number>) {
 export interface BlockEdit {
   id: number; // used for searching block
   name?: string;
-  hsl?: [number, number, number];
+  hsl?: HslColor;
   zoomFactor?: number;
   fillWithWalls?: boolean;
   floatInSpace?: boolean;

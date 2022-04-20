@@ -50,7 +50,7 @@ export function toRawLevelColor(color: HslColor): {
   return { hue, sat, val };
 }
 
-const satMap: { [k: number]: DefaultColor } = {
+const hueMap: { [k: number]: DefaultColor } = {
   0.6: "block color 1",
   0.4: "block color 2",
   0.55: "block color 3",
@@ -72,7 +72,7 @@ export function fromRawColor(
 
   if (sat === 0) return "root block";
 
-  let name = satMap[sat];
+  let name = hueMap[hue];
   if (name !== undefined) {
     return name;
   }

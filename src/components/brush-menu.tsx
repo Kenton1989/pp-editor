@@ -9,10 +9,11 @@ import { ReactComponent as EraserSvg } from "./asset/eraser-brush.svg";
 import { Brush, DEFAULT_BRUSH } from "../models/edit-ui/brush";
 import { BlockState } from "../models/edit-level/state";
 import { PropsWithChildren } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hook";
+import { useAppDispatch } from "../app/hook";
 import { LEVEL } from "../models/edit-level";
 import { BlockPreview } from "./block-preview";
 import { UI } from "../models/edit-ui";
+import { useBlockList, useCurrentBlk } from "../app/selector";
 
 const SIMPLE_BRUSHES: [Brush, JSX.Element][] = [
   [DEFAULT_BRUSH.select, <SelectOutlined />],
@@ -24,7 +25,7 @@ const SIMPLE_BRUSHES: [Brush, JSX.Element][] = [
 ];
 
 export default function BrushMenu(props: {}) {
-  let blocks = useAppSelector((state) => state.level.present.blocks);
+  let blocks = useBlockList();
   let dispatch = useAppDispatch();
 
   return (
@@ -68,7 +69,7 @@ function SimpleBrushRadio(props: PropsWithChildren<{ brush: Brush }>) {
 
 function BlockBrushRadio(props: { block: BlockState }) {
   let { block } = props;
-  let curBlk = useAppSelector((state) => state.ui.editingBlk);
+  let curBlk = useCurrentBlk();
   let dispatch = useAppDispatch();
   return (
     <Radio.Button value={block.id} className="block-radio">
@@ -78,7 +79,7 @@ function BlockBrushRadio(props: { block: BlockState }) {
         <Button
           className="block-edit-btn"
           size="small"
-          disabled={curBlk === block.id}
+          disabled={curBlk && curBlk.id === block.id}
           onClick={() => {
             dispatch(UI.selectBlk(block.id));
           }}

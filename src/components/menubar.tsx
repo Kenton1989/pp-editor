@@ -118,11 +118,17 @@ function useActionHandler(): (name: string) => any {
         dispatch(LEVEL.reset());
       } else if (name === ID.open) {
         let state = await openLevelStateFile();
+        if (!state) return;
         dispatch(LEVEL.reset(state));
       } else if (name === ID.import) {
-        let [raw, title] = await inputLevelFile();
-        let state = importLevelState(raw, title);
-        dispatch(LEVEL.reset(state));
+        try {
+          let [raw, title] = await inputLevelFile();
+          let state = importLevelState(raw, title);
+          dispatch(LEVEL.reset(state));
+        } catch (e: any) {
+          message.error("cannot open level file:" + e);
+          return;
+        }
       }
     },
     [dispatch, levelState]
@@ -133,17 +139,17 @@ function useActionHandler(): (name: string) => any {
 let ajv = new Ajv();
 let levelStateValidate = ajv.compile(levelStateSchema);
 
-async function openLevelStateFile(): Promise<LevelState> {
-  let [s] = await inputTxtFile("application/json", MAX_FILE_SIZE);
-  let state;
+async function openLevelStateFile(): Promise<LevelState | undefined> {
   try {
+    let [s] = await inputTxtFile("application/json", MAX_FILE_SIZE);
+    let state: any = undefined;
     state = JSON.parse(s);
+    if (!levelStateValidate(state)) {
+      message.error("invalid file format");
+    }
+    return state as LevelState;
   } catch (e) {
     console.error(e);
     message.error("invalid file format");
   }
-  if (!levelStateValidate(state)) {
-    message.error("invalid file format");
-  }
-  return state as LevelState;
 }

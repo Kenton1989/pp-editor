@@ -1,18 +1,7 @@
-import { useAppDispatch, useAppSelector } from "../app/hook";
+import { useAppDispatch } from "../app/hook";
 import { LEVEL } from "../models/edit-level";
-import { ActionCreators } from "redux-undo";
 import "./property-editor.css";
-import {
-  Col,
-  Divider,
-  Empty,
-  Input,
-  InputNumber,
-  Row,
-  Space,
-  Switch,
-  Typography,
-} from "antd";
+import { Col, Divider, Empty, Input, InputNumber, Row, Switch } from "antd";
 import { useCurrentBlk } from "../app/selector";
 import { PropsWithChildren, useState } from "react";
 import { BlockEdit } from "../models/edit-level/slice";
@@ -91,6 +80,7 @@ function BlockProps(props: { blk: BlockState }) {
         <InputNumber
           value={blk.zoomFactor}
           onChange={(val) => editBlk({ zoomFactor: val })}
+          min={0.01}
           step={0.1}
         />
       </PropRow>

@@ -11,6 +11,7 @@
   padding: 0px 16px;
   overflow-y: scroll;
   flex-grow: 1;
+  width: 100%;
 }
 
 .property-editor .property-row {

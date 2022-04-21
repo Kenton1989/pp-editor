@@ -13,7 +13,7 @@
 #ref-brushes {
   display: inline-block;
   flex-grow: 1;
-  overflow-y: scroll;
+  overflow: auto;
 }
 
 #ref-brushes .ant-list-footer {

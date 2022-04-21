@@ -6,12 +6,18 @@
   height: 100%;
 }
 
+.apply-flex-centers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 main {
   display: flex;
   align-items: stretch;
 }
 
-.property-editor {
+#property-editor {
   width: 20vw;
 }
 

@@ -186,9 +186,9 @@ function makeRef(blk: RawBlock, ref?: RawRef): RefCell {
   let r = {
     exitBlock: true,
     infExit: false,
-    infExitNum: 0,
+    infExitNum: 1,
     infEnter: false,
-    infEnterNum: 0,
+    infEnterNum: 1,
     infEnterId: 0,
     ...blk,
     ...ref,

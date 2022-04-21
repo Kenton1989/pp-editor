@@ -40,6 +40,7 @@ export default function MenuBar(props: MenuProps) {
             keyName={shortCut}
             onKeyDown={() => handleAction(key)}
             allowRepeat
+            filter={(e) => true}
           >
             <span className="action-item-shortcut">{shortCut}</span>
           </Hotkeys>
@@ -97,13 +98,22 @@ const SHORTCUT: { [k: string]: string } =
         export: "ctrl+shift+e",
       };
 
+document.body.onkeydown = (e) => {
+  // prevent default undo action
+  if (e.ctrlKey && e.key === "z") {
+    e.preventDefault();
+  }
+  if (e.metaKey && e.key === "z") {
+    e.preventDefault();
+  }
+};
+
 function useActionHandler(): (name: string) => any {
   const dispatch = useDispatch();
   const levelState = useAppSelector((state) => state.level.present);
 
   let cb = useCallback(
     async (name: string) => {
-      console.log(name);
       if (name === ID.undo) {
         dispatch(ActionCreators.undo());
       } else if (name === ID.redo) {

@@ -41,6 +41,7 @@ export default function MapEditor(props: {}) {
       <EditorGrid
         w={blk.width}
         h={blk.height}
+        scale={blk.zoomFactor}
         backgroundColor={floorColor(color)}
         renderCell={(x, y) => (
           <BlockCell
@@ -59,12 +60,16 @@ function EditorGrid(props: {
   w: number;
   h: number;
   backgroundColor: string;
+  scale?: number;
   renderCell?: (x: number, y: number) => JSX.Element | null;
 }) {
-  let { w, h, renderCell = () => <></>, backgroundColor } = props;
+  let { w, h, scale = 1, renderCell = () => <></>, backgroundColor } = props;
 
   return (
-    <div className="map-grid" style={{ backgroundColor }}>
+    <div
+      className="map-grid"
+      style={{ backgroundColor, transform: `scale(${scale})` }}
+    >
       {Array.from({ length: w }, (v, x) => (
         <div className="map-axis" key={x}>
           {Array.from({ length: h }, (v, y) => (
@@ -100,7 +105,8 @@ function BlockCell(props: {
   }
 
   const cls =
-    "map-block" +
+    className +
+    " map-block" +
     (selectable ? " selectable" : "") +
     (selected ? " selected" : "");
 

@@ -1,20 +1,70 @@
-.property-editor {
+#property-editor {
   display: flex;
   flex-direction: column;
 
-  align-items: center;
-  justify-content: stretch;
+  height: calc(100vh - 64px);
+
+  align-items: stretch;
+  justify-content: space-evenly;
 
   border-left: 2px solid lightgray;
 }
 
-.property-editor .block-property {
-  padding: 0px 16px;
-  overflow-y: scroll;
+#property-editor .prop-editor-section {
   flex-grow: 1;
+}
+
+#property-editor .ant-select {
   width: 100%;
 }
 
-.property-editor .property-row {
-  margin-top: 8px;
+#property-editor .prop-editor-title {
+  width: 100%;
+  height: 40px;
+  font-size: large;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: hsl(209, 100%, 8%);
+  color: #d3d3d3;
+}
+
+#property-editor .prop-editor-content {
+  width: 100%;
+  height: calc(100% - 40px);
+  padding: 8px 16px;
+  overflow-y: scroll;
+}
+
+#property-editor .cell-property {
+  border-top: 2px solid lightgray;
+}
+
+#property-editor .property-row {
+  margin: 8px 0;
+}
+
+#property-editor .hsl-val-input {
+  width: 5em;
+  padding-right: 8px;
+}
+
+#property-editor .hsl-val-input .hsl-field-input {
+  width: 100%;
+  min-width: 3em;
+}
+
+#property-editor .react-colorful {
+  height: 150px;
+  max-width: 150px;
+}
+
+#property-editor .react-colorful__hue-pointer,
+#property-editor .react-colorful__saturation-pointer {
+  width: 16px;
+  height: 16px;
+}
+
+#property-editor .react-colorful__hue {
+  height: 16px;
 }

@@ -7,7 +7,7 @@ import {
   isAttemptOrder,
   LevelRoot,
 } from "../../game-level-file/v4/types";
-import { Cell, Grid } from "./cell";
+import { Cell, Grid, RefCell } from "./cell";
 import { importLevelState } from "./io";
 import { DEFAULT_HEADER } from "../../game-level-file/v4/const";
 import { HslColor } from "./color";
@@ -206,7 +206,7 @@ export interface CellEdit {
   blkId: number;
   x: number; // to locate cell
   y: number; // to locate cell
-  hsl?: [number, number, number];
+  hsl?: HslColor;
   id?: number;
   exitBlock?: boolean;
   infExit?: boolean;
@@ -225,13 +225,23 @@ export interface CellEdit {
 
 function updateCell(state: LevelState, action: PayloadAction<CellEdit>) {
   let update = action.payload;
-  let { blkId, x, y } = update;
-  let [ok, , cell] = getCell(state, blkId, x, y);
+  let { blkId, x, y, ...newValues } = update;
+  let [ok, , tempCell] = getCell(state, blkId, x, y);
   if (!ok) return;
+  let cell = tempCell!;
 
-  for (const key in Object.keys(update)) {
-    if (key in cell!) {
-      (cell as any)[key] = (update as any)[key];
+  let turnOnEps = !(cell as RefCell).infEnter && newValues.infEnter;
+
+  for (const key in newValues) {
+    if (key in cell) {
+      let newVal = (update as any)[key];
+      (cell as any)[key] = newVal;
+    }
+  }
+
+  if (turnOnEps && cell.cellType === "Ref") {
+    if (!getBlock(state.blocks, cell.infEnterId) && state.blocks.length > 0) {
+      cell.infEnterId = state.blocks[0].id;
     }
   }
 }

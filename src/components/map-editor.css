@@ -52,7 +52,7 @@
   right: 0;
 
   transition-property: transform, border;
-  transition-duration: 0.1s;
+  transition-duration: 0.2s;
 
   z-index: 3;
 }
@@ -60,6 +60,10 @@
 #map-editor .map-block canvas {
   width: 100%;
   height: 100%;
+}
+
+#map-editor .selectable {
+  border: 0px solid #1890ff;
 }
 
 #map-editor .selectable:hover {

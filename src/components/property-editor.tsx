@@ -557,11 +557,11 @@ const COLOR_OPTIONS: {
 const FLOOR_TYPE_OPTIONS = [
   {
     label: "Box Target",
-    value: "Floor" as FloorType,
+    value: "Button" as FloorType,
   },
   {
     label: "Player Target",
-    value: "PlayerFloor" as FloorType,
+    value: "PlayerButton" as FloorType,
   },
 ];
 

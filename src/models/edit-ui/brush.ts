@@ -5,7 +5,6 @@ import {
   SimplePlayerCell,
   BoxCell,
 } from "../edit-level/cell";
-import { HslColor } from "../edit-level/color";
 
 type FromCell<T> = Omit<T, "cellType" | "x" | "y">;
 

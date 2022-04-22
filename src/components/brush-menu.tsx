@@ -1,6 +1,11 @@
-import { Button, List, Radio } from "antd";
+import { Button, Col, List, Radio, Row } from "antd";
 import "./brush-menu.css";
-import Icon, { EditOutlined, SelectOutlined } from "@ant-design/icons";
+import Icon, {
+  DeleteOutlined,
+  EditOutlined,
+  FormatPainterOutlined,
+  SelectOutlined,
+} from "@ant-design/icons";
 import { ReactComponent as WallSvg } from "./asset/wall-brush.svg";
 import { ReactComponent as PlayerSvg } from "./asset/player-brush.svg";
 import { ReactComponent as BoxSvg } from "./asset/box-brush.svg";
@@ -39,6 +44,7 @@ export default function BrushMenu(props: {}) {
     <Radio.Group
       className="brush-menu"
       buttonStyle="solid"
+      size="small"
       defaultValue={DEFAULT_BRUSH.select.brushType}
     >
       <List
@@ -85,27 +91,52 @@ function BlockBrushRadio(props: { block: BlockState }) {
   let selected = curBlk && curBlk.id === block.id;
 
   return (
-    <Radio.Button
-      value={block.id}
-      className="block-radio"
-      onClick={() =>
-        dispatch(UI.setBrush({ ...DEFAULT_BRUSH.ref, id: block.id }))
-      }
-    >
-      <div className="block-radio-content">
-        <BlockPreview className="block-preview" block={block} />
-        <span className="block-name">{block.name}</span>
-        <Button
-          className="block-edit-btn"
-          size="small"
-          type={selected ? "primary" : "default"}
-          onClick={() => {
-            dispatch(UI.selectBlk(block.id));
-          }}
-        >
-          <EditOutlined />
-        </Button>
-      </div>
-    </Radio.Button>
+    <div className="block-radio-content">
+      <BlockPreview className="block-preview" block={block} />
+      <span className="block-summary">
+        <Row>
+          <Col span={24}>
+            <span className="block-name">{block.name}</span>
+          </Col>
+          <Col span={24} className="block-action-btn-list">
+            <Button
+              size="small"
+              className="block-edit-btn"
+              type={selected ? "primary" : "default"}
+              onClick={() => {
+                dispatch(UI.selectBlk(block.id));
+              }}
+            >
+              {curBlk && curBlk.id === block.id ? (
+                "Editing"
+              ) : (
+                <>
+                  <EditOutlined />
+                  Edit
+                </>
+              )}
+            </Button>
+            <Radio.Button
+              value={block.id}
+              className="block-radio"
+              onClick={() =>
+                dispatch(UI.setBrush({ ...DEFAULT_BRUSH.ref, id: block.id }))
+              }
+            >
+              <FormatPainterOutlined />
+              Brush
+            </Radio.Button>
+            <Button
+              size="small"
+              onClick={() => {
+                dispatch(LEVEL.removeBlk(block.id));
+              }}
+            >
+              <DeleteOutlined />
+            </Button>
+          </Col>
+        </Row>
+      </span>
+    </div>
   );
 }

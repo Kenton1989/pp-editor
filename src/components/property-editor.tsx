@@ -20,7 +20,7 @@ import { useBlockList, useBrush, useCurrentCell } from "../app/selector";
 import { PropsWithChildren, useState } from "react";
 import { BlockEdit, CellEdit } from "../models/edit-level/slice";
 import { BlockState } from "../models/edit-level/state";
-import { HslColor, toHslArr, toHslStr } from "../models/edit-level/color";
+import { HslColor, toHslArr } from "../models/edit-level/color";
 import { HslColorPicker } from "react-colorful";
 import { Cell } from "../models/edit-level/cell";
 import { FloorType } from "../game-level-file/v4/types";

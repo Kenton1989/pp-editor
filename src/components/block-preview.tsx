@@ -70,6 +70,7 @@ export function BlockCellPreview(
     ...other
   } = props;
   let ref = useRef<HTMLCanvasElement>(null);
+
   useEffect(() => {
     let canvas = ref.current;
     if (canvas === null) return;
@@ -94,7 +95,7 @@ function renderBlock(
   let colorBase = Color.hsl(toHslArr(block.hsl));
 
   if (level >= MAX_RECURSIVE_RENDER_LEVEL) {
-    ctx.fillStyle = colorBase.string();
+    ctx.fillStyle = floorColor(colorBase);
     ctx.fillRect(x0, y0, w0, h0);
     return;
   }
@@ -142,7 +143,10 @@ function renderCell(
 ) {
   if (cell.cellType === "Ref") {
     let refSrc = map.get(cell.id);
-    if (refSrc === undefined) return;
+    if (refSrc === undefined) {
+      renderUnknownBlk(ctx, x0, y0, w0, h0);
+      return;
+    }
     let flipRef = parentFlipH !== cell.flipH;
     renderBlock(ctx, refSrc, map, x0, y0, w0, h0, parentLevel + 1, flipRef);
     let borderClr = borderColor(Color.hsl(toHslArr(refSrc.hsl)));
@@ -196,6 +200,23 @@ function renderCell(
     }
     return;
   }
+}
+
+function renderUnknownBlk(
+  ctx: CanvasRenderingContext2D,
+  x0: number,
+  y0: number,
+  w0: number,
+  h0: number
+) {
+  let [halfW, halfH] = [w0 * 0.5, h0 * 0.5];
+  let [centerX, centerY] = [x0 + halfW, y0 + halfH];
+  ctx.fillStyle = "purple";
+  ctx.fillRect(x0, y0, halfW, halfH);
+  ctx.fillRect(centerX, centerY, halfW, halfH);
+  ctx.fillStyle = "black";
+  ctx.fillRect(x0, centerY, halfW, halfH);
+  ctx.fillRect(centerX, y0, halfW, halfH);
 }
 
 function renderRefDetails(

@@ -101,7 +101,8 @@ function BlockCell(props: { cell: Cell | undefined; className?: string }) {
   }
 
   const cls = classNames(className, "map-block", {
-    selectable: true,
+    selectable: brush.brushType === "Select",
+    erasable: brush.brushType === "Erase",
     selected: curCell && curCell.x === cell.x && curCell.y === cell.y,
   });
 

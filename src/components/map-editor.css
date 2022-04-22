@@ -5,6 +5,11 @@
   overflow: scroll;
 }
 
+#map-editor * {
+  transition-property: transform, border, opacity;
+  transition-duration: 0.2s;
+}
+
 #map-editor .map-grid {
   display: inline-flex;
   justify-content: center;
@@ -51,9 +56,6 @@
   bottom: 0;
   right: 0;
 
-  transition-property: transform, border;
-  transition-duration: 0.2s;
-
   z-index: 3;
 }
 
@@ -63,12 +65,12 @@
 }
 
 #map-editor .selectable {
-  border: 0px solid #1890ff;
+  border: 0px solid DodgerBlue;
 }
 
 #map-editor .selectable:hover {
   transform: scale(1.2);
-  border: 4px solid #1890ff;
+  border: 4px solid DodgerBlue;
   z-index: 10;
 }
 
@@ -76,4 +78,16 @@
   transform: scale(1.2);
   border: 4px solid yellow;
   z-index: 6;
+}
+
+#map-editor .erasable {
+  border: 0px solid red;
+}
+
+#map-editor .erasable:hover {
+  border: 4px solid red;
+}
+
+#map-editor .erasable:hover canvas {
+  opacity: 0.3;
 }

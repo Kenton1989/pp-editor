@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { Cell } from "../models/edit-level/cell";
 import { HslColor, toHslArr } from "../models/edit-level/color";
 import { BlockState, LevelState } from "../models/edit-level/state";
+import { Brush } from "../models/edit-ui/brush";
 import { useAppSelector } from "./hook";
 import { RootState } from "./store";
 
@@ -14,6 +15,10 @@ export function currentBlock(state: RootState): BlockState | undefined {
 
 export function useLevel(): LevelState {
   return useAppSelector((state) => state.level.present);
+}
+
+export function useBrush(): Brush {
+  return useAppSelector((state) => state.ui.brush);
 }
 
 export function useBlockList(): BlockState[] {

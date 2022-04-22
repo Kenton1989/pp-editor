@@ -5,6 +5,7 @@ import {
   SimplePlayerCell,
   BoxCell,
 } from "../edit-level/cell";
+import { HslColor } from "../edit-level/color";
 
 type FromCell<T> = Omit<T, "cellType" | "x" | "y">;
 
@@ -45,36 +46,36 @@ export type Brush =
   | SimplePlayerBrush
   | BoxBrush;
 
-export const DEFAULT_BRUSH: { [s: string]: Brush } = {
+export const DEFAULT_BRUSH = {
   select: {
-    brushType: "Select",
+    brushType: "Select" as "Select",
   },
   erase: {
-    brushType: "Erase",
+    brushType: "Erase" as "Erase",
   },
   wall: {
-    brushType: "Wall",
+    brushType: "Wall" as "Wall",
     player: false,
     possessable: false,
     playerOrder: 0,
   },
   floor: {
-    brushType: "Floor",
-    floorType: "Button",
+    brushType: "Floor" as "Floor",
+    floorType: "Button" as "Button",
   },
   player: {
-    brushType: "SimplePlayer",
-    hsl: "player",
+    brushType: "SimplePlayer" as "SimplePlayer",
+    hsl: "player" as "player",
     player: true,
     possessable: true,
     playerOrder: 0,
   },
   box: {
-    brushType: "Box",
-    hsl: "box",
+    brushType: "Box" as "Box",
+    hsl: "box" as "box",
   },
   ref: {
-    brushType: "Ref",
+    brushType: "Ref" as "Ref",
     id: 0,
     exitBlock: true,
     infExit: false,

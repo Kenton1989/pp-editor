@@ -40,7 +40,6 @@ export default function BrushMenu(props: {}) {
       className="brush-menu"
       buttonStyle="solid"
       defaultValue={DEFAULT_BRUSH.select.brushType}
-      onChange={(e) => console.log(e.target.value, typeof e.target.value)}
     >
       <List
         id="simple-brushes"
@@ -67,8 +66,13 @@ export default function BrushMenu(props: {}) {
 
 function SimpleBrushRadio(props: PropsWithChildren<{ brush: Brush }>) {
   let { brush, children } = props;
+  const dispatch = useAppDispatch();
   return (
-    <Radio.Button value={brush.brushType} className="simple-radio">
+    <Radio.Button
+      value={brush.brushType}
+      className="simple-radio"
+      onClick={() => dispatch(UI.setBrush(brush))}
+    >
       {children}
     </Radio.Button>
   );
@@ -79,8 +83,15 @@ function BlockBrushRadio(props: { block: BlockState }) {
   let curBlk = useCurrentBlk();
   let dispatch = useAppDispatch();
   let selected = curBlk && curBlk.id === block.id;
+
   return (
-    <Radio.Button value={block.id} className="block-radio">
+    <Radio.Button
+      value={block.id}
+      className="block-radio"
+      onClick={() =>
+        dispatch(UI.setBrush({ ...DEFAULT_BRUSH.ref, id: block.id }))
+      }
+    >
       <div className="block-radio-content">
         <BlockPreview className="block-preview" block={block} />
         <span className="block-name">{block.name}</span>

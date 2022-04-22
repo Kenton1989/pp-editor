@@ -37,7 +37,7 @@ function setBrush(state: UiState, action: PayloadAction<Brush>) {
   }
 }
 
-interface BrushEdit {
+export interface BrushEdit {
   id?: number;
   exitBlock?: boolean;
   infExit?: boolean;

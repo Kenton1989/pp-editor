@@ -14,36 +14,39 @@ import {
   SelectProps,
   Switch,
   SwitchProps,
+  Tag,
 } from "antd";
-import { useBlockList, useCurrentCell } from "../app/selector";
+import { useBlockList, useBrush, useCurrentCell } from "../app/selector";
 import { PropsWithChildren, useState } from "react";
 import { BlockEdit, CellEdit } from "../models/edit-level/slice";
 import { BlockState } from "../models/edit-level/state";
-import { HslColor, toHslArr } from "../models/edit-level/color";
+import { HslColor, toHslArr, toHslStr } from "../models/edit-level/color";
 import { HslColorPicker } from "react-colorful";
 import { Cell } from "../models/edit-level/cell";
 import { FloorType } from "../game-level-file/v4/types";
 import { useMemo } from "react";
+import { Brush } from "../models/edit-ui/brush";
+import { BrushEdit } from "../models/edit-ui/slice";
+import { UI } from "../models/edit-ui";
+import Color from "color";
 
 export default function PropertyEditor(props: {}) {
   let [blk, cell] = useCurrentCell();
+  let brush = useBrush();
 
   let sectionCnt = 0;
   if (blk !== undefined) ++sectionCnt;
   if (cell !== undefined) ++sectionCnt;
+  if (!(brush.brushType === "Select" || brush.brushType === "Erase"))
+    ++sectionCnt;
+  let sizePercent = Math.round(100 / sectionCnt);
 
   return (
     <div id="property-editor">
       {sectionCnt === 0 && <Empty description="No Properties Data" />}
-      <BlockProps
-        blk={blk}
-        sizePercent={sectionCnt === 0 ? 100 : 100 / sectionCnt}
-      />
-      <CellProps
-        parentBlk={blk}
-        cell={cell}
-        sizePercent={sectionCnt === 0 ? 0 : 100 / sectionCnt}
-      />
+      <BlockProps blk={blk} sizePercent={sizePercent} />
+      <CellProps parentBlk={blk} cell={cell} sizePercent={sizePercent} />
+      <BrushProps brush={brush} sizePercent={sizePercent} />
     </div>
   );
 }
@@ -356,6 +359,187 @@ function CellProps(props: {
   );
 }
 
+function BrushProps(props: { brush: Brush; sizePercent: number }) {
+  let { brush, sizePercent } = props;
+
+  let dispatch = useAppDispatch();
+
+  let editBrush = (arg: BrushEdit) => dispatch(UI.updateBrush(arg));
+
+  if (brush.brushType === "Select" || brush.brushType === "Erase") {
+    return <></>;
+  }
+
+  let [
+    hslProp,
+    idProp,
+    exitProp,
+    infProp,
+    infNumProp,
+    epsProp,
+    epsNumProp,
+    epsFromProp,
+    flipHProp,
+    floatInSpaceProp,
+    specialEffectProp,
+    isPlayerProp,
+    possessableProp,
+    playerOrderProp,
+    floorTypeProps,
+  ]: (JSX.Element | undefined)[] = [];
+
+  if (brush.brushType === "Box" || brush.brushType === "SimplePlayer") {
+    hslProp = (
+      <ColorProperty
+        value={brush.hsl}
+        onChange={(v) => editBrush({ hsl: v })}
+      />
+    );
+  }
+
+  if (brush.brushType === "Floor") {
+    floorTypeProps = (
+      <PropRow label="Floor Type">
+        <Radio.Group
+          value={brush.floorType}
+          onChange={(v) => editBrush({ floorType: v.target.value })}
+          options={FLOOR_TYPE_OPTIONS}
+        />
+      </PropRow>
+    );
+  }
+
+  if (brush.brushType === "SimplePlayer" || brush.brushType === "Ref") {
+    isPlayerProp = (
+      <BoolProp
+        label="Is Player"
+        value={brush.player}
+        onChange={(v) => editBrush({ player: v })}
+      />
+    );
+    playerOrderProp = brush.player ? (
+      <NumberProp
+        label="Player Order"
+        value={brush.playerOrder}
+        onChange={(v) => editBrush({ playerOrder: v })}
+      />
+    ) : undefined;
+    possessableProp = (
+      <BoolProp
+        label="Possessable"
+        value={brush.possessable}
+        onChange={(v) => editBrush({ possessable: v })}
+      />
+    );
+  }
+
+  if (brush.brushType === "Ref") {
+    idProp = (
+      <BlockIdProp
+        label="Referring"
+        value={brush.id}
+        onChange={(v) => {
+          editBrush({ id: v });
+        }}
+      />
+    );
+    exitProp = (
+      <BoolProp
+        label="Is Clone"
+        value={!brush.exitBlock}
+        onChange={(v) => editBrush({ exitBlock: !v })}
+      />
+    );
+    infProp = (
+      <BoolProp
+        label="Is ∞"
+        value={brush.infExit}
+        onChange={(v) => editBrush({ infExit: v })}
+      />
+    );
+    infNumProp = brush.infExit ? (
+      <NumberProp
+        label="∞ Level"
+        value={brush.infExitNum}
+        onChange={(v) => editBrush({ infExitNum: v })}
+      />
+    ) : undefined;
+    epsProp = (
+      <BoolProp
+        label="Is ε"
+        value={brush.infEnter}
+        onChange={(v) => editBrush({ infEnter: v })}
+      />
+    );
+    epsNumProp = brush.infEnter ? (
+      <NumberProp
+        label="ε Level"
+        value={brush.infEnterNum}
+        onChange={(v) => editBrush({ infEnterNum: v })}
+      />
+    ) : undefined;
+    epsFromProp = brush.infEnter ? (
+      <BlockIdProp
+        label="ε Enter From"
+        value={brush.infEnterId}
+        onChange={(v) => editBrush({ infEnterId: v })}
+      />
+    ) : undefined;
+    flipHProp = (
+      <BoolProp
+        label="Horizontal Flip"
+        value={brush.flipH}
+        onChange={(v) => editBrush({ flipH: v })}
+      />
+    );
+    floatInSpaceProp = (
+      <BoolProp
+        label="Float in Space"
+        value={brush.floatInSpace}
+        onChange={(v) => editBrush({ floatInSpace: v })}
+      />
+    );
+    specialEffectProp = (
+      <NumberProp
+        label="Special Effect"
+        value={brush.specialEffect}
+        onChange={(v) => editBrush({ specialEffect: v })}
+      />
+    );
+  }
+
+  return (
+    <div
+      className="brush-property prop-editor-section"
+      style={{
+        height: `${sizePercent}%`,
+      }}
+    >
+      <PropSecTitle>Brush Properties</PropSecTitle>
+      <div className="prop-editor-content">
+        <PropRow label="Type">
+          {CELL_TYPE_DISPLAY_NAME[brush.brushType]}
+        </PropRow>
+        {idProp}
+        {exitProp}
+        {infProp}
+        {infNumProp}
+        {epsProp}
+        {epsNumProp}
+        {epsFromProp}
+        {flipHProp}
+        {floatInSpaceProp}
+        {specialEffectProp}
+        {isPlayerProp}
+        {playerOrderProp}
+        {possessableProp}
+        {hslProp}
+        {floorTypeProps}
+      </div>
+    </div>
+  );
+}
+
 const CELL_TYPE_DISPLAY_NAME = {
   Ref: "Reference",
   Wall: "Wall",
@@ -452,25 +636,40 @@ function ColorProperty(props: {
 
   let hslArr = toHslArr(value);
   let [h, s, l] = hslArr;
+  let color = Color.hsl(h, s, l);
 
   return (
     <>
-      <PropRow label={label}>
-        <Select
-          value={colorOptions}
-          options={COLOR_OPTIONS}
-          onChange={(newVal) => {
-            if (newVal === "customize") {
-              let clr = hslArr;
-              onChange(clr);
-            } else {
-              onChange(newVal);
-            }
-          }}
-          size="small"
-          style={{ width: "100%" }}
-        />
-      </PropRow>
+      <Row className="property-row" align="middle" justify="center" gutter={8}>
+        <Col span={12}>
+          <Tag
+            color={color.string()}
+            style={{
+              color: color.isDark() ? "white" : "black",
+            }}
+          >
+            {label}
+          </Tag>
+          {" :"}
+        </Col>
+        <Col span={12}>
+          <Select
+            value={colorOptions}
+            options={COLOR_OPTIONS}
+            onChange={(newVal) => {
+              if (newVal === "customize") {
+                let clr = hslArr;
+                onChange(clr);
+              } else {
+                onChange(newVal);
+              }
+            }}
+            size="small"
+            style={{ width: "100%" }}
+          />
+        </Col>
+      </Row>
+
       {showPicker && (
         <>
           <div className="apply-flex-centers property-row">

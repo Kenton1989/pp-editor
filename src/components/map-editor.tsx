@@ -1,5 +1,10 @@
 import { PropsWithChildren } from "react";
-import { useBlockColor, useCurrentCell } from "../app/selector";
+import {
+  useBlockColor,
+  useBrush,
+  useCurrentBlk,
+  useCurrentCell,
+} from "../app/selector";
 import { floorColor } from "./block-render-config";
 import "./map-editor.css";
 import { useDrag, useDrop } from "react-dnd";
@@ -8,11 +13,14 @@ import { Cell } from "../models/edit-level/cell";
 import { BlockCellPreview } from "./block-preview";
 import { BlockState } from "../models/edit-level/state";
 import { Empty } from "antd";
-import { useDispatch } from "react-redux";
 import { UI } from "../models/edit-ui";
+import { Brush } from "../models/edit-ui/brush";
+import classNames from "classnames";
+import { useAppDispatch } from "../app/hook";
+import { LEVEL } from "../models/edit-level";
 
 export default function MapEditor(props: {}) {
-  let [blk, cell] = useCurrentCell();
+  let blk = useCurrentBlk();
   let color = useBlockColor(blk);
 
   if (blk === undefined) {
@@ -42,14 +50,7 @@ export default function MapEditor(props: {}) {
         w={blk.width}
         h={blk.height}
         backgroundColor={floorColor(color)}
-        renderCell={(x, y) => (
-          <BlockCell
-            parent={blk!}
-            cell={blk!.grid[x][y]}
-            selectable
-            selected={cell && x === cell.x && y === cell.y}
-          />
-        )}
+        renderCell={(x, y) => <BlockCell cell={blk!.grid[x][y]} />}
       />
     </div>
   );
@@ -84,35 +85,46 @@ function MapCell(props: PropsWithChildren<{ x: number; y: number }>) {
   return <div className="map-cell">{children}</div>;
 }
 
-function BlockCell(props: {
-  parent: BlockState;
-  cell: Cell | undefined;
-  selected?: boolean;
-  selectable?: boolean;
-  className?: string;
-}) {
-  const { parent, cell, selected, selectable, className = "" } = props;
-  const color = useBlockColor(parent);
-  const dispatch = useDispatch();
+function BlockCell(props: { cell: Cell | undefined; className?: string }) {
+  const { cell, className = "" } = props;
+
+  const [curBlk, curCell] = useCurrentCell();
+  const color = useBlockColor(curBlk);
+  const brush = useBrush();
+
+  const dispatch = useAppDispatch();
+
+  const onClick = useOnCellClick(curBlk!, cell!, brush, dispatch);
 
   if (!cell) {
     return <></>;
   }
 
-  const cls =
-    className +
-    " map-block" +
-    (selectable ? " selectable" : "") +
-    (selected ? " selected" : "");
+  const cls = classNames(className, "map-block", {
+    selectable: true,
+    selected: curCell && curCell.x === cell.x && curCell.y === cell.y,
+  });
 
   return (
-    <div
-      className={cls}
-      onClick={() => {
-        dispatch(UI.selectCell([cell.x, cell.y]));
-      }}
-    >
+    <div className={cls} onClick={onClick}>
       <BlockCellPreview cell={cell} parentColor={color} />
     </div>
   );
+}
+
+function useOnCellClick(
+  parentBlk: BlockState,
+  cell: Cell,
+  brush: Brush,
+  dispatch: ReturnType<typeof useAppDispatch>
+) {
+  switch (brush.brushType) {
+    case "Select":
+      return () => dispatch(UI.selectCell([cell.x, cell.y]));
+    case "Erase":
+      return () =>
+        dispatch(
+          LEVEL.removeCell({ blkId: parentBlk.id, pos: [cell.x, cell.y] })
+        );
+  }
 }

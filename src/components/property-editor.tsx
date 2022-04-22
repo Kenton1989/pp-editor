@@ -115,6 +115,31 @@ function BlockProps(props: { blk?: BlockState; sizePercent: number }) {
             editBlk({ fillWithWalls: val });
           }}
         />
+        <BoolProp
+          label="Is ε"
+          value={blk.infEnter}
+          onChange={(val) => {
+            editBlk({ infEnter: val });
+          }}
+        />
+        {blk.infEnter && (
+          <>
+            <NumberProp
+              label="ε Level"
+              value={blk.infEnterNum}
+              onChange={(val) => {
+                editBlk({ infEnterNum: val });
+              }}
+            />
+            <BlockIdProp
+              label="ε Enter From"
+              value={blk.infEnterId}
+              onChange={(val) => {
+                editBlk({ infEnterId: val });
+              }}
+            />
+          </>
+        )}
         <ColorProperty
           value={blk.hsl}
           onChange={(val) => {

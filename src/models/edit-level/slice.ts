@@ -86,8 +86,8 @@ function createBlk(state: LevelState) {
   let newBlk: BlockState = {
     id: id,
     name: `Block ${id}`,
-    width: 7,
-    height: 7,
+    width: 9,
+    height: 9,
     hsl: "root block",
     zoomFactor: 1,
     fillWithWalls: false,
@@ -115,6 +115,9 @@ export interface BlockEdit {
   fillWithWalls?: boolean;
   floatInSpace?: boolean;
   specialEffect?: number;
+  infEnter?: boolean;
+  infEnterNum?: number;
+  infEnterId?: number;
 }
 
 function updateBlk(state: LevelState, action: PayloadAction<BlockEdit>) {

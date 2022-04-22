@@ -93,7 +93,10 @@ function createBlk(state: LevelState) {
     fillWithWalls: false,
     floatInSpace: false,
     specialEffect: 0,
-    grid: makeGrid(7, 7),
+    grid: makeGrid(9, 9),
+    infEnter: false,
+    infEnterNum: 0,
+    infEnterId: 0,
   };
 
   state.blocks.push(newBlk);

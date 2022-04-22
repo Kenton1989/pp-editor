@@ -16,6 +16,9 @@ export interface BlockState {
   fillWithWalls: boolean;
   floatInSpace: boolean;
   specialEffect: number;
+  infEnter: boolean;
+  infEnterNum: number;
+  infEnterId: number;
   grid: Grid;
 }
 

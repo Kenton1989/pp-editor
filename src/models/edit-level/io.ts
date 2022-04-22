@@ -83,6 +83,9 @@ function importBlock(
     floatInSpace: src.floatInSpace,
     specialEffect: src.specialEffect,
     grid: makeGrid(src.width, src.height),
+    infEnter: false,
+    infEnterNum: 0,
+    infEnterId: 0,
   };
 
   for (const blk of src.children) {

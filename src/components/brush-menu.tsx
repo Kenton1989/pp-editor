@@ -1,4 +1,4 @@
-import { Button, List, Radio, Space } from "antd";
+import { Button, List, Radio } from "antd";
 import "./brush-menu.css";
 import Icon, { EditOutlined, SelectOutlined } from "@ant-design/icons";
 import { ReactComponent as WallSvg } from "./asset/wall-brush.svg";
@@ -8,7 +8,7 @@ import { ReactComponent as PlayerFloorSvg } from "./asset/playerfloor-brush.svg"
 import { ReactComponent as EraserSvg } from "./asset/eraser-brush.svg";
 import { Brush, DEFAULT_BRUSH } from "../models/edit-ui/brush";
 import { BlockState } from "../models/edit-level/state";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { useAppDispatch } from "../app/hook";
 import { LEVEL } from "../models/edit-level";
 import { BlockPreview } from "./block-preview";
@@ -27,6 +27,13 @@ const SIMPLE_BRUSHES: [Brush, JSX.Element][] = [
 export default function BrushMenu(props: {}) {
   let blocks = useBlockList();
   let dispatch = useAppDispatch();
+  let curBlk = useCurrentBlk();
+
+  useEffect(() => {
+    if (blocks.length > 0 && curBlk === undefined) {
+      dispatch(UI.selectBlk(blocks[0].id));
+    }
+  });
 
   return (
     <Radio.Group
@@ -47,11 +54,11 @@ export default function BrushMenu(props: {}) {
         dataSource={blocks}
         renderItem={(blk) => <BlockBrushRadio block={blk} />}
         footer={
-          <Space align="center" direction="vertical">
+          <div className="apply-flex-centers">
             <Button size="large" onClick={() => dispatch(LEVEL.createBlk())}>
               + New Block
             </Button>
-          </Space>
+          </div>
         }
       ></List>
     </Radio.Group>

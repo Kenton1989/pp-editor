@@ -34,6 +34,7 @@ export default function PropertyEditor(props: {}) {
 
   return (
     <div id="property-editor">
+      {sectionCnt === 0 && <Empty description="No Properties Data" />}
       <BlockProps
         blk={blk}
         sizePercent={sectionCnt === 0 ? 100 : 100 / sectionCnt}
@@ -69,19 +70,7 @@ function BlockProps(props: { blk?: BlockState; sizePercent: number }) {
   };
 
   if (!blk) {
-    return (
-      <div
-        className="block-property prop-editor-section"
-        style={{
-          height: `${sizePercent}%`,
-        }}
-      >
-        <PropSecTitle>Block Properties</PropSecTitle>
-        <div className="prop-editor-content">
-          <Empty />
-        </div>
-      </div>
-    );
+    return <></>;
   }
 
   return (

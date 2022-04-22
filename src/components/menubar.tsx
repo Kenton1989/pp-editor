@@ -13,7 +13,6 @@ import { LevelState } from "../models/edit-level/state";
 import { inputTxtFile, outputTxtFile } from "../text-io";
 import "./menubar.css";
 import Ajv from "ajv";
-
 const { SubMenu } = Menu;
 const MAX_FILE_SIZE = 1 << 20; // 1mb;
 

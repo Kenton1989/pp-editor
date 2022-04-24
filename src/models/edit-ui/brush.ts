@@ -4,6 +4,7 @@ import {
   FloorCell,
   SimplePlayerCell,
   BoxCell,
+  Cell,
 } from "../edit-level/cell";
 
 type FromCell<T> = Omit<T, "cellType" | "x" | "y">;
@@ -36,14 +37,41 @@ export interface BoxBrush extends FromCell<BoxCell> {
   brushType: "Box";
 }
 
-export type Brush =
-  | SelectBrush
-  | EraseBrush
+export type BlockBrush =
   | RefBrush
   | WallBrush
   | FloorBrush
   | SimplePlayerBrush
   | BoxBrush;
+
+export type OperationBrush = SelectBrush | EraseBrush;
+
+export type Brush = OperationBrush | BlockBrush;
+
+export function toBlockBrush(brush: Brush): BlockBrush | undefined {
+  switch (brush.brushType) {
+    case "Select":
+    case "Erase":
+      return undefined;
+    default:
+      return brush;
+  }
+}
+
+export function toOperationBrush(brush: Brush): OperationBrush | undefined {
+  switch (brush.brushType) {
+    case "Select":
+    case "Erase":
+      return brush;
+    default:
+      return undefined;
+  }
+}
+
+export function toCell(brush: BlockBrush, x: number, y: number): Cell {
+  let { brushType, ...data } = brush;
+  return { cellType: brushType, x, y, ...data } as Cell;
+}
 
 export const DEFAULT_BRUSH = {
   select: {
@@ -60,7 +88,7 @@ export const DEFAULT_BRUSH = {
   },
   floor: {
     brushType: "Floor" as "Floor",
-    floorType: "Button" as "Button",
+    floorType: "PlayerButton" as "PlayerButton",
   },
   player: {
     brushType: "SimplePlayer" as "SimplePlayer",

@@ -1,6 +1,6 @@
 import Color from "color";
 
-export const MAX_RECURSIVE_RENDER_LEVEL = 5;
+export const MAX_RECURSIVE_RENDER_LEVEL = 2;
 export const [CANVAS_WIDTH, CANVAS_HEIGHT] = [300, 300];
 
 export const [L_EYE_X_OFFEST, R_EYE_X_OFFSET, EYE_Y_OFFSET] = [0.3, 0.7, 0.45];

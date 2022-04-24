@@ -1,8 +1,9 @@
-import { PropsWithChildren } from "react";
+import React, { PropsWithChildren, useState } from "react";
 import {
   useBlockColor,
   useBrush,
   useCurrentBlk,
+  useCurrentBlkColor,
   useCurrentCell,
 } from "../app/selector";
 import { floorColor } from "./block-render-config";
@@ -14,7 +15,7 @@ import { BlockCellPreview } from "./block-preview";
 import { BlockState } from "../models/edit-level/state";
 import { Empty } from "antd";
 import { UI } from "../models/edit-ui";
-import { Brush } from "../models/edit-ui/brush";
+import { Brush, toBlockBrush, toCell } from "../models/edit-ui/brush";
 import classNames from "classnames";
 import { useAppDispatch } from "../app/hook";
 import { LEVEL } from "../models/edit-level";
@@ -82,7 +83,41 @@ function EditorGrid(props: {
 function MapCell(props: PropsWithChildren<{ x: number; y: number }>) {
   const { x, y, children } = props;
 
-  return <div className="map-cell">{children}</div>;
+  const brush = useBrush();
+  const curBlk = useCurrentBlk()!;
+  const curColor = useCurrentBlkColor();
+  const dispatch = useAppDispatch();
+
+  const [hover, setHover] = useState(false);
+
+  let preview: JSX.Element = <></>;
+  let onClick = () => {};
+
+  if (hover) {
+    let blkBrush = toBlockBrush(brush);
+    if (blkBrush !== undefined) {
+      let newCell = toCell(blkBrush, x, y);
+      onClick = () =>
+        dispatch(LEVEL.setCell({ cell: newCell, blkId: curBlk.id }));
+      preview = (
+        <div className="map-block brush-preview-cell-overlay">
+          <BlockCellPreview cell={newCell} parentColor={curColor} />
+        </div>
+      );
+    }
+  }
+
+  return (
+    <div
+      className="map-cell"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onClick={onClick}
+    >
+      {children}
+      {preview}
+    </div>
+  );
 }
 
 function BlockCell(props: { cell: Cell | undefined; className?: string }) {
@@ -94,7 +129,7 @@ function BlockCell(props: { cell: Cell | undefined; className?: string }) {
 
   const dispatch = useAppDispatch();
 
-  const onClick = useOnCellClick(curBlk!, cell!, brush, dispatch);
+  const onClick = useOnBlockCellClick(curBlk!, cell!, brush, dispatch);
 
   if (!cell) {
     return <></>;
@@ -113,7 +148,7 @@ function BlockCell(props: { cell: Cell | undefined; className?: string }) {
   );
 }
 
-function useOnCellClick(
+function useOnBlockCellClick(
   parentBlk: BlockState,
   cell: Cell,
   brush: Brush,
@@ -127,5 +162,7 @@ function useOnCellClick(
         dispatch(
           LEVEL.removeCell({ blkId: parentBlk.id, pos: [cell.x, cell.y] })
         );
+    default:
+      return undefined;
   }
 }

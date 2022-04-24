@@ -3,7 +3,7 @@ import { Layout, Menu, PageHeader } from "antd";
 import MenuBar from "./components/menubar";
 import MapEditor from "./components/map-editor";
 import BrushMenu from "./components/brush-menu";
-import PropertyEditor from "./components/property-editor";
+import PropertyEditor from "./components/preperty-editor";
 
 import "./App.css";
 

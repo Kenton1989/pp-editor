@@ -56,7 +56,12 @@
   bottom: 0;
   right: 0;
 
-  z-index: 3;
+  z-index: 2;
+}
+
+#map-editor .brush-preview-cell-overlay {
+  z-index: 4;
+  opacity: 0.5;
 }
 
 #map-editor .map-block canvas {

@@ -37,6 +37,11 @@ export function useCurrentBlk(): BlockState | undefined {
   return blkMap.get(id);
 }
 
+export function useCurrentBlkColor(): Color {
+  let blk = useCurrentBlk();
+  return useBlockColor(blk);
+}
+
 export function useBlock(id: number): BlockState | undefined {
   let blkMap = useBlockMap();
   return blkMap.get(id);

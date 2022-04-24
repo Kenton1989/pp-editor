@@ -1,3 +1,4 @@
+import Color from "color";
 import convert from "color-convert";
 
 export type DefaultColor =
@@ -35,6 +36,10 @@ export function toHslArr(color: HslColor): [number, number, number] {
 export function toHslStr(color: HslColor): string {
   let [h, s, l] = toHslArr(color);
   return `hsl(${h},${s}%,${l}%)`;
+}
+
+export function toColorObj(color: HslColor): Color {
+  return Color.hsl(toHslArr(color));
 }
 
 export function toRawLevelColor(color: HslColor): {

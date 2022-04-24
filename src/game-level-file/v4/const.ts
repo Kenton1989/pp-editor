@@ -6,8 +6,8 @@ const DEFAULT_HEADER: RawLevelHeader = {
   shed: false,
   innerPush: false,
   drawStyle: "",
-  customLevelMusic: -1,
-  customLevelPalette: -1,
+  customLevelMusic: 0,
+  customLevelPalette: 0,
 };
 
 const DEFAULT_ATTEMPT_ORDER = DEFAULT_HEADER.attemptOrder;

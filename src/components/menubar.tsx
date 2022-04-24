@@ -1,6 +1,5 @@
 import { Menu, MenuProps, message } from "antd";
-// import { Validator } from "jsonschema";
-import { useCallback } from "react";
+import React, { PropsWithChildren, useCallback } from "react";
 import Hotkeys from "react-hot-keys";
 import { useDispatch } from "react-redux";
 import { ActionCreators } from "redux-undo";
@@ -60,18 +59,41 @@ export default function MenuBar(props: MenuProps) {
         {makeItem("undo")}
         {makeItem("redo")}
       </SubMenu>
+      <SubMenu key="help" title="Helps">
+        <Menu.Item onClick={() => {}}>Keyboard Shortcuts</Menu.Item>
+        <Menu.Item>
+          <BlankA href="https://www.patricksparabox.com/custom-levels/#load">
+            Load &amp; Play Customized Level
+          </BlankA>
+        </Menu.Item>
+      </SubMenu>
+      <SubMenu key="about" title="About">
+        <Menu.Item>
+          <BlankA href="https://www.patricksparabox.com/custom-levels/">
+            Official Level Editor
+          </BlankA>
+        </Menu.Item>
+      </SubMenu>
     </Menu>
   );
 }
 
+function BlankA(props: PropsWithChildren<React.HTMLProps<HTMLAnchorElement>>) {
+  return (
+    <a target="_blank" rel="noreferrer" {...props}>
+      {props.children}
+    </a>
+  );
+}
+
 const ID = {
-  new: "new",
-  open: "open",
-  save: "save",
-  undo: "undo",
-  redo: "redo",
-  import: "import",
-  export: "export",
+  new: "new" as "new",
+  open: "open" as "open",
+  save: "save" as "save",
+  undo: "undo" as "undo",
+  redo: "redo" as "redo",
+  import: "import" as "import",
+  export: "export" as "export",
 };
 
 const TITLE: { [k: string]: string } = {
@@ -85,15 +107,15 @@ const SHORTCUT: { [k: string]: string } =
   window.navigator.userAgent.indexOf("Mac") >= 0
     ? {
         save: "command+alt+s",
+        export: "command+shift+s",
         undo: "command+z",
         redo: "command+shift+z",
-        export: "command+shift+s",
       }
     : {
         save: "ctrl+alt+s",
+        export: "ctrl+shift+s",
         undo: "ctrl+z",
         redo: "ctrl+shift+z",
-        export: "ctrl+shift+s",
       };
 
 document.body.onkeydown = (e) => {

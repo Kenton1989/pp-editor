@@ -75,7 +75,7 @@ export default function BrushCellSharedProps(props: {
       <BoolProp
         label="Is Player"
         value={data.player}
-        onChange={(v) => updater({ player: v })}
+        onChange={(v) => updater({ player: v, possessable: v })}
       />
     );
     playerOrderProp = data.player ? (

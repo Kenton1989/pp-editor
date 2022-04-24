@@ -19,14 +19,15 @@ import { LEVEL } from "../models/edit-level";
 import { BlockPreview } from "./block-preview";
 import { UI } from "../models/edit-ui";
 import { useBlockList, useBrush, useCurrentBlk } from "../app/selector";
+import ReactHotkeys from "react-hot-keys";
 
-const SIMPLE_BRUSHES: [Brush, JSX.Element, string?][] = [
-  [DEFAULT_BRUSH.select, <SelectOutlined />],
-  [DEFAULT_BRUSH.erase, <Icon component={EraserSvg} />],
-  [DEFAULT_BRUSH.wall, <Icon component={WallSvg} />],
-  [DEFAULT_BRUSH.box, <Icon component={BoxSvg} />],
-  [DEFAULT_BRUSH.player, <Icon component={PlayerSvg} />],
-  [DEFAULT_BRUSH.floor, <Icon component={FloorSvg} />],
+const SIMPLE_BRUSHES: [Brush, JSX.Element, string][] = [
+  [DEFAULT_BRUSH.select, <SelectOutlined />, "f"],
+  [DEFAULT_BRUSH.erase, <Icon component={EraserSvg} />, "d"],
+  [DEFAULT_BRUSH.wall, <Icon component={WallSvg} />, "r"],
+  [DEFAULT_BRUSH.box, <Icon component={BoxSvg} />, "e"],
+  [DEFAULT_BRUSH.player, <Icon component={PlayerSvg} />, "w"],
+  [DEFAULT_BRUSH.floor, <Icon component={FloorSvg} />, "q"],
 ];
 
 export default function BrushMenu(props: {}) {
@@ -56,8 +57,10 @@ export default function BrushMenu(props: {}) {
       <List
         id="simple-brushes"
         dataSource={SIMPLE_BRUSHES}
-        renderItem={([brush, icon]) => (
-          <SimpleBrushRadio brush={brush}>{icon}</SimpleBrushRadio>
+        renderItem={([brush, icon, hotKey]) => (
+          <SimpleBrushRadio brush={brush} hotKey={hotKey}>
+            {icon}
+          </SimpleBrushRadio>
         )}
       ></List>
       <List
@@ -71,20 +74,35 @@ export default function BrushMenu(props: {}) {
             </Button>
           </div>
         }
-      ></List>
+      />
+      {Array.from({ length: 10 }, (v, i) => (
+        <ReactHotkeys
+          key={i}
+          keyName={`${(i + 1) % 10}`}
+          onKeyDown={() => {
+            if (i >= blocks.length) return;
+            dispatch(UI.setBrush({ ...DEFAULT_BRUSH.ref, id: blocks[i].id }));
+          }}
+        />
+      ))}
     </Radio.Group>
   );
 }
 
-function SimpleBrushRadio(props: PropsWithChildren<{ brush: Brush }>) {
-  let { brush, children } = props;
+function SimpleBrushRadio(
+  props: PropsWithChildren<{ brush: Brush; hotKey: string }>
+) {
+  let { brush, children, hotKey } = props;
   const dispatch = useAppDispatch();
+  let selectBrush = () => dispatch(UI.setBrush(brush));
+
   return (
     <Radio.Button
       value={brush.brushType}
       className="simple-radio"
-      onClick={() => dispatch(UI.setBrush(brush))}
+      onClick={selectBrush}
     >
+      <ReactHotkeys keyName={hotKey} onKeyDown={selectBrush} />
       {children}
     </Radio.Button>
   );

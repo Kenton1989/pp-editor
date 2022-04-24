@@ -39,7 +39,6 @@ export default function MenuBar(props: MenuProps) {
             keyName={shortCut}
             onKeyDown={() => handleAction(key)}
             allowRepeat
-            filter={(e) => true}
           >
             <span className="action-item-shortcut">{shortCut}</span>
           </Hotkeys>
@@ -78,23 +77,23 @@ const ID = {
 const TITLE: { [k: string]: string } = {
   open: "open .json",
   save: "save .json",
-  import: "import .txt",
-  export: "export .txt",
+  import: "open .txt",
+  export: "save .txt",
 };
 
 const SHORTCUT: { [k: string]: string } =
   window.navigator.userAgent.indexOf("Mac") >= 0
     ? {
-        save: "command+shift+s",
+        save: "command+alt+s",
         undo: "command+z",
         redo: "command+shift+z",
-        export: "command+shift+e",
+        export: "command+shift+s",
       }
     : {
-        save: "ctrl+shift+s",
+        save: "ctrl+alt+s",
         undo: "ctrl+z",
         redo: "ctrl+shift+z",
-        export: "ctrl+shift+e",
+        export: "ctrl+shift+s",
       };
 
 document.body.onkeydown = (e) => {

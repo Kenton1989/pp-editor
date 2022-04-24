@@ -8,7 +8,13 @@ import {
 } from "../app/selector";
 import { floorColor } from "./block-render-config";
 import "./map-editor.css";
-import { useDrag, useDrop } from "react-dnd";
+import {
+  DragSourceHookSpec,
+  DropTargetHookSpec,
+  FactoryOrInstance,
+  useDrag,
+  useDrop,
+} from "react-dnd";
 import { ItemTypes } from "./const";
 import { Cell } from "../models/edit-level/cell";
 import { BlockCellPreview } from "./block-preview";
@@ -90,7 +96,30 @@ function MapCell(props: PropsWithChildren<{ x: number; y: number }>) {
 
   const [hover, setHover] = useState(false);
 
-  let preview: JSX.Element = <></>;
+  const [{ cellDraggingThrough }, dropRef] = useBlockDrop({
+    accept: ItemTypes.BLOCK,
+    drop: ({ x: srcX, y: srcY }) => {
+      if (srcX === undefined || srcY === undefined) return;
+      dispatch(
+        LEVEL.moveCell({ blkId: curBlk.id, from: [srcX, srcY], to: [x, y] })
+      );
+    },
+    collect: (monitor) => {
+      let src = monitor.getItem();
+      if (!monitor.isOver() || src.x === undefined || src.y === undefined) {
+        return {
+          cellDraggingThrough: undefined,
+        };
+      }
+      let cell = curBlk.grid[src.x][src.y];
+      return {
+        cellDraggingThrough: cell,
+      };
+    },
+  });
+
+  let brushPreview: JSX.Element = <></>;
+  let draggingPreview: JSX.Element = <></>;
   let onClick = () => {};
 
   if (hover) {
@@ -99,7 +128,7 @@ function MapCell(props: PropsWithChildren<{ x: number; y: number }>) {
       let newCell = toCell(blkBrush, x, y);
       onClick = () =>
         dispatch(LEVEL.setCell({ cell: newCell, blkId: curBlk.id }));
-      preview = (
+      brushPreview = (
         <div className="map-block brush-preview-cell-overlay">
           <BlockCellPreview cell={newCell} parentColor={curColor} />
         </div>
@@ -107,21 +136,32 @@ function MapCell(props: PropsWithChildren<{ x: number; y: number }>) {
     }
   }
 
+  if (cellDraggingThrough) {
+    draggingPreview = (
+      <div className="map-block dragging-preview-cell-overlay">
+        <BlockCellPreview cell={cellDraggingThrough} parentColor={curColor} />
+      </div>
+    );
+  }
+
   return (
     <div
-      className="map-cell"
+      className={"map-cell"}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onClick={onClick}
+      ref={dropRef}
     >
       {children}
-      {preview}
+      {brushPreview}
+      {draggingPreview}
     </div>
   );
 }
 
 function BlockCell(props: { cell: Cell | undefined; className?: string }) {
   const { cell, className = "" } = props;
+  const [x, y] = [cell && cell.x, cell && cell.y];
 
   const [curBlk, curCell] = useCurrentCell();
   const color = useBlockColor(curBlk);
@@ -131,6 +171,15 @@ function BlockCell(props: { cell: Cell | undefined; className?: string }) {
 
   const onClick = useOnBlockCellClick(curBlk!, cell!, brush, dispatch);
 
+  const [{ dragging }, dragRef] = useBlockDrag({
+    type: ItemTypes.BLOCK,
+    item: { x, y },
+    canDrag: () => brush.brushType === "Select",
+    collect: (monitor) => ({
+      dragging: monitor.isDragging(),
+    }),
+  });
+
   if (!cell) {
     return <></>;
   }
@@ -138,11 +187,12 @@ function BlockCell(props: { cell: Cell | undefined; className?: string }) {
   const cls = classNames(className, "map-block", {
     selectable: brush.brushType === "Select",
     erasable: brush.brushType === "Erase",
+    "dragging-src": dragging,
     selected: curCell && curCell.x === cell.x && curCell.y === cell.y,
   });
 
   return (
-    <div className={cls} onClick={onClick}>
+    <div className={cls} onClick={onClick} ref={dragRef}>
       <BlockCellPreview cell={cell} parentColor={color} />
     </div>
   );
@@ -165,4 +215,29 @@ function useOnBlockCellClick(
     default:
       return undefined;
   }
+}
+
+interface BlockDragItem {
+  x?: number;
+  y?: number;
+}
+
+type BlockDropResult = unknown;
+
+function useBlockDrag<CollectedProps>(
+  specArg: FactoryOrInstance<
+    DragSourceHookSpec<BlockDragItem, BlockDropResult, CollectedProps>
+  >,
+  deps?: unknown[]
+) {
+  return useDrag<BlockDragItem, BlockDropResult, CollectedProps>(specArg, deps);
+}
+
+function useBlockDrop<CollectedProps>(
+  specArg: FactoryOrInstance<
+    DropTargetHookSpec<BlockDragItem, BlockDropResult, CollectedProps>
+  >,
+  deps?: unknown[]
+) {
+  return useDrop<BlockDragItem, BlockDropResult, CollectedProps>(specArg, deps);
 }

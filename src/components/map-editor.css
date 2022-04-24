@@ -99,3 +99,12 @@
 #map-editor .erasable:hover canvas {
   opacity: 0.3;
 }
+
+#map-editor .dragging-src {
+  opacity: 0.5;
+}
+
+#map-editor .dragging-preview-cell-overlay {
+  z-index: 10;
+  opacity: 0.5;
+}

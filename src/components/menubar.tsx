@@ -60,17 +60,27 @@ export default function MenuBar(props: MenuProps) {
         {makeItem("redo")}
       </SubMenu>
       <SubMenu key="help" title="Helps">
-        <Menu.Item onClick={() => {}}>Keyboard Shortcuts</Menu.Item>
-        <Menu.Item>
+        <Menu.Item onClick={() => {}} key="shortcuts">
+          Keyboard Shortcuts
+        </Menu.Item>
+        <Menu.Item onClick={() => {}} key="json-txt-file">
+          Save .json or Save .txt?
+        </Menu.Item>
+        <Menu.Item key="load-level">
           <BlankA href="https://www.patricksparabox.com/custom-levels/#load">
             Load &amp; Play Customized Level
           </BlankA>
         </Menu.Item>
       </SubMenu>
       <SubMenu key="about" title="About">
-        <Menu.Item>
+        <Menu.Item key="official-editor">
           <BlankA href="https://www.patricksparabox.com/custom-levels/">
-            Official Level Editor
+            Official Customized Level Manual
+          </BlankA>
+        </Menu.Item>
+        <Menu.Item key="source-code">
+          <BlankA href="https://github.com/Kenton1989/pp-editor">
+            Parabox Editor Source Code
           </BlankA>
         </Menu.Item>
       </SubMenu>

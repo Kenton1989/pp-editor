@@ -19,7 +19,7 @@ function App() {
         <Header>
           <div className="main-logo">
             <img src="/logo192.png" alt="logo" />
-            <span>Parabox Editor</span>
+            <span>Kanton's Parabox Editor</span>
           </div>
           <MenuBar />
         </Header>

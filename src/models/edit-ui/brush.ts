@@ -88,6 +88,10 @@ export const DEFAULT_BRUSH = {
   },
   floor: {
     brushType: "Floor" as "Floor",
+    floorType: "Button" as "Button",
+  },
+  playerFloor: {
+    brushType: "Floor" as "Floor",
     floorType: "PlayerButton" as "PlayerButton",
   },
   player: {

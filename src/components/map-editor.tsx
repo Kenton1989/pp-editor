@@ -106,7 +106,12 @@ function MapCell(props: PropsWithChildren<{ x: number; y: number }>) {
     },
     collect: (monitor) => {
       let src = monitor.getItem();
-      if (!monitor.isOver() || src.x === undefined || src.y === undefined) {
+      if (
+        !monitor.isOver() ||
+        src.x === undefined ||
+        src.y === undefined ||
+        (src.x === x && src.y === y)
+      ) {
         return {
           cellDraggingThrough: undefined,
         };

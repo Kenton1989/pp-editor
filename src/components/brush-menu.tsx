@@ -9,7 +9,7 @@ import Icon, {
 import { ReactComponent as WallSvg } from "./asset/wall-brush.svg";
 import { ReactComponent as PlayerSvg } from "./asset/player-brush.svg";
 import { ReactComponent as BoxSvg } from "./asset/box-brush.svg";
-import { ReactComponent as PlayerFloorSvg } from "./asset/playerfloor-brush.svg";
+import { ReactComponent as FloorSvg } from "./asset/floor-brush.svg";
 import { ReactComponent as EraserSvg } from "./asset/eraser-brush.svg";
 import { Brush, DEFAULT_BRUSH } from "../models/edit-ui/brush";
 import { BlockState } from "../models/edit-level/state";
@@ -18,21 +18,22 @@ import { useAppDispatch } from "../app/hook";
 import { LEVEL } from "../models/edit-level";
 import { BlockPreview } from "./block-preview";
 import { UI } from "../models/edit-ui";
-import { useBlockList, useCurrentBlk } from "../app/selector";
+import { useBlockList, useBrush, useCurrentBlk } from "../app/selector";
 
-const SIMPLE_BRUSHES: [Brush, JSX.Element][] = [
+const SIMPLE_BRUSHES: [Brush, JSX.Element, string?][] = [
   [DEFAULT_BRUSH.select, <SelectOutlined />],
   [DEFAULT_BRUSH.erase, <Icon component={EraserSvg} />],
   [DEFAULT_BRUSH.wall, <Icon component={WallSvg} />],
   [DEFAULT_BRUSH.box, <Icon component={BoxSvg} />],
   [DEFAULT_BRUSH.player, <Icon component={PlayerSvg} />],
-  [DEFAULT_BRUSH.floor, <Icon component={PlayerFloorSvg} />],
+  [DEFAULT_BRUSH.floor, <Icon component={FloorSvg} />],
 ];
 
 export default function BrushMenu(props: {}) {
   let blocks = useBlockList();
   let dispatch = useAppDispatch();
   let curBlk = useCurrentBlk();
+  let brush = useBrush();
 
   useEffect(() => {
     if (blocks.length > 0 && curBlk === undefined) {
@@ -40,12 +41,17 @@ export default function BrushMenu(props: {}) {
     }
   });
 
+  let brushKey: string | number = brush.brushType;
+  if (brush.brushType === "Ref") {
+    brushKey = brush.id;
+  }
+
   return (
     <Radio.Group
       className="brush-menu"
       buttonStyle="solid"
       size="small"
-      defaultValue={DEFAULT_BRUSH.select.brushType}
+      value={brushKey}
     >
       <List
         id="simple-brushes"
@@ -91,7 +97,10 @@ function BlockBrushRadio(props: { block: BlockState }) {
   let selected = curBlk && curBlk.id === block.id;
 
   return (
-    <div className="block-radio-content">
+    <div
+      className="block-radio-content"
+      onClick={() => dispatch(UI.selectBlk(block.id))}
+    >
       <BlockPreview className="block-preview" block={block} />
       <span className="block-summary">
         <Row>

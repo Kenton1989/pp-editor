@@ -182,6 +182,12 @@ function renderCell(
   if (cell.cellType === "Wall") {
     let color = wallColor(colorBase);
     renderWall(ctx, color, x0, y0, w0, h0);
+    let eyeClr = eyeColor(colorBase);
+    if (cell.player) {
+      drawEyes(ctx, eyeClr, x0, y0, w0, h0, true);
+    } else if (cell.possessable) {
+      drawEyes(ctx, eyeClr, x0, y0, w0, h0, false);
+    }
     return;
   }
 

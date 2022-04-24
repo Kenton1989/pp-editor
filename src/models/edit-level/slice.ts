@@ -144,18 +144,44 @@ function resizeBlk(
   blk.grid = newGrid;
 }
 
+function arrEq(arr1: any[], arr2: any[]): boolean {
+  return arr1.length === arr2.length && arr1.every((val, i) => val === arr2[i]);
+}
+
+function cellEq(a?: Cell, b?: Cell): boolean {
+  if (a === undefined || b === undefined) return a === b;
+  if (a.cellType !== b.cellType) return false;
+
+  for (const key in a) {
+    if (key === "hsl") {
+      let hsl1 = (a as any).hsl,
+        hsl2 = (b as any).hsl;
+      if (typeof hsl1 === "string" || typeof hsl2 === "string") {
+        if (hsl1 !== hsl2) return false;
+      } else {
+        if (!arrEq((a as any).hsl, (b as any).hsl)) return false;
+      }
+    } else {
+      if ((a as any)[key] !== (b as any)[key]) return false;
+    }
+  }
+
+  return true;
+}
+
 function setCell(
   state: LevelState,
   action: PayloadAction<{ cell: Cell; blkId: number }>
 ) {
   let { blkId, cell } = action.payload;
-  setCellImpl(state, blkId, cell);
+  return setCellImpl(state, blkId, cell);
 }
 
 function setCellImpl(state: LevelState, blkId: number, cell: Cell) {
   let { x, y } = cell;
-  let [ok, blk] = getCell(state, blkId, x, y);
+  let [ok, blk, old] = getCell(state, blkId, x, y);
   if (!ok) return;
+  if (cellEq(old, cell)) return state;
   blk!.grid[x][y] = cell;
 }
 

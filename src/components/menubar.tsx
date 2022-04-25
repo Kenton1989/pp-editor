@@ -60,11 +60,20 @@ export default function MenuBar(props: MenuProps) {
         {makeItem("redo")}
       </SubMenu>
       <SubMenu key="help" title="Helps">
-        <Menu.Item onClick={() => {}} key="shortcuts">
-          Keyboard Shortcuts
+        <Menu.Item key="shortcuts">
+          <BlankA href="https://github.com/Kenton1989/pp-editor#keyboard-shortcuts">
+            Keyboard Shortcuts
+          </BlankA>
         </Menu.Item>
-        <Menu.Item onClick={() => {}} key="json-txt-file">
-          Save .json vs. Save .txt?
+        <Menu.Item key="json-txt-file">
+          <BlankA href="https://github.com/Kenton1989/pp-editor#save-json-vs-save-txt">
+            Save .json vs. Save .txt?
+          </BlankA>
+        </Menu.Item>
+        <Menu.Item key="property-mean">
+          <BlankA href="https://www.patricksparabox.com/custom-levels/#file-format">
+            Explanation of Each Properties
+          </BlankA>
         </Menu.Item>
         <Menu.Item key="load-level">
           <BlankA href="https://www.patricksparabox.com/custom-levels/#load">

@@ -51,14 +51,8 @@ export default function MapEditor(props: {}) {
     );
   }
 
-  let bgColor: string | undefined = undefined;
-
-  if (blk.floatInSpace) {
-    bgColor = "#111";
-  }
-
   return (
-    <div id="map-editor" style={{ backgroundColor: bgColor }}>
+    <div id="map-editor">
       <EditorGrid
         w={blk.width}
         h={blk.height}

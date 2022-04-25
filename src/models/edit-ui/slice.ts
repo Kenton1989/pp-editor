@@ -32,9 +32,6 @@ function selectCell(
 function setBrush(state: UiState, action: PayloadAction<Brush>) {
   let brush = action.payload;
   state.brush = { ...brush };
-  if (brush.brushType !== "Select") {
-    state.editingCell = undefined;
-  }
 }
 
 export interface BrushEdit {

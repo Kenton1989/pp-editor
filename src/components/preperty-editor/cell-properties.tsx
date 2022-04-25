@@ -7,8 +7,8 @@ import BrushCellSharedProps from "./brush-cell-shared-properties";
 import { CELL_TYPE_DISPLAY_NAME, PropRow, PropSecTitle } from "./common";
 
 export default function CellProps(props: {
-  parentBlk?: BlockState;
-  cell?: Cell;
+  parentBlk: BlockState;
+  cell: Cell;
   sizePercent: number;
 }) {
   let { parentBlk: parent, cell, sizePercent } = props;
@@ -16,12 +16,8 @@ export default function CellProps(props: {
   let dispatch = useAppDispatch();
   let editCell = (edit: Omit<CellEdit, "blkId" | "x" | "y">) =>
     dispatch(
-      LEVEL.updateCell({ blkId: parent!.id, x: cell!.x, y: cell!.y, ...edit })
+      LEVEL.updateCell({ blkId: parent.id, x: cell.x, y: cell.y, ...edit })
     );
-
-  if (!parent || !cell) {
-    return <></>;
-  }
 
   return (
     <div

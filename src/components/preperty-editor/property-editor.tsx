@@ -7,21 +7,26 @@ import CellProps from "./cell-properties";
 import BrushProps from "./brush-properties";
 
 export default function PropertyEditor(props: {}) {
-  let [blk, cell] = useCurrentCell();
-  let brush = useBrush();
+  const [blk, cell] = useCurrentCell();
+  const brush = useBrush();
 
-  let sectionCnt = 0;
-  if (blk !== undefined) ++sectionCnt;
-  if (cell !== undefined) ++sectionCnt;
-  if (toBlockBrush(brush)) ++sectionCnt;
-  let sizePercent = Math.round(100 / sectionCnt);
+  const showBlkProp = blk !== undefined;
+  const showCellProp = cell !== undefined && brush.brushType === "Select";
+  const showBrushProp = toBlockBrush(brush) !== undefined;
+
+  const sectionCnt =
+    Number(showBlkProp) + Number(showCellProp) + Number(showBrushProp);
+
+  const sizePercent = Math.round(100 / sectionCnt);
 
   return (
     <div id="property-editor">
       {sectionCnt === 0 && <Empty description="No Properties Data" />}
-      <BlockProps blk={blk} sizePercent={sizePercent} />
-      <CellProps parentBlk={blk} cell={cell} sizePercent={sizePercent} />
-      <BrushProps brush={brush} sizePercent={sizePercent} />
+      {showBlkProp && <BlockProps blk={blk} sizePercent={sizePercent} />}
+      {showBlkProp && showCellProp && (
+        <CellProps parentBlk={blk} cell={cell} sizePercent={sizePercent} />
+      )}
+      {showBrushProp && <BrushProps brush={brush} sizePercent={sizePercent} />}
     </div>
   );
 }

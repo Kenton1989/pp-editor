@@ -137,8 +137,10 @@ function MapCell(props: PropsWithChildren<{ x: number; y: number }>) {
     let blkBrush = toBlockBrush(brush);
     if (blkBrush !== undefined) {
       let newCell = toCell(blkBrush, x, y);
-      onClick = () =>
+      onClick = () => {
         dispatch(LEVEL.setCell({ cell: newCell, blkId: curBlk.id }));
+        dispatch(UI.selectCell([x, y]));
+      };
       brushPreview = (
         <div className="map-block brush-preview-cell-overlay">
           <BlockCellPreview cell={newCell} parentColor={curColor} />
@@ -199,7 +201,11 @@ function BlockCell(props: { cell: Cell | undefined; className?: string }) {
     selectable: brush.brushType === "Select",
     erasable: brush.brushType === "Erase",
     "dragging-src": dragging,
-    selected: curCell && curCell.x === cell.x && curCell.y === cell.y,
+    selected:
+      brush.brushType === "Select" &&
+      curCell &&
+      curCell.x === cell.x &&
+      curCell.y === cell.y,
   });
 
   return (

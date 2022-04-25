@@ -14,19 +14,19 @@ import {
 } from "./common";
 
 export default function BlockProps(props: {
-  blk?: BlockState;
+  blk: BlockState;
   sizePercent: number;
 }) {
   let { blk, sizePercent } = props;
 
   let dispatch = useAppDispatch();
   let editBlk = (edit: Omit<BlockEdit, "id">) =>
-    dispatch(LEVEL.updateBlk({ id: blk!.id, ...edit }));
+    dispatch(LEVEL.updateBlk({ id: blk.id, ...edit }));
 
   let [ensureSquare, setEnsureSquare] = useState(true);
 
   let resize = (sz: { w?: number; h?: number }) => {
-    let [w, h] = [blk!.width, blk!.height];
+    let [w, h] = [blk.width, blk.height];
     if (ensureSquare) {
       if (sz.w) w = h = sz.w;
       if (sz.h) w = h = sz.h;
@@ -34,12 +34,8 @@ export default function BlockProps(props: {
       if (sz.w) w = sz.w;
       if (sz.h) h = sz.h;
     }
-    dispatch(LEVEL.resizeBlk({ id: blk!.id, w, h }));
+    dispatch(LEVEL.resizeBlk({ id: blk.id, w, h }));
   };
-
-  if (!blk) {
-    return <></>;
-  }
 
   return (
     <div

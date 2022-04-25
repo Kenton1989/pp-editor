@@ -18,7 +18,7 @@ function App() {
       <Layout className="stretch-height">
         <Header>
           <div className="main-logo">
-            <img src="/logo192.png" alt="logo" />
+            <img src="./logo192.png" alt="logo" />
             <span>Patrick's Parabox Editor</span>
           </div>
           <MenuBar />

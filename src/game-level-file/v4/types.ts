@@ -22,9 +22,10 @@ export function isAttemptOrder(list: string[]): boolean {
 }
 
 export type DrawStyle = "" | "tui" | "grid" | "oldstyle";
-const DRAW_STYLES = new Set(["", "tui", "grid", "oldstyle"]);
+export const DRAW_STYLES = ["", "tui", "grid", "oldstyle"];
+const DRAW_STYLES_SET = new Set(DRAW_STYLES);
 export function isDrawStyle(s: string): boolean {
-  return DRAW_STYLES.has(s);
+  return DRAW_STYLES_SET.has(s);
 }
 
 export interface RawLevelHeader {

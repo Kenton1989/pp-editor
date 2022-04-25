@@ -3,6 +3,8 @@
   justify-content: center;
   align-items: center;
   overflow: scroll;
+  transition-property: background-color;
+  transition-duration: 0.2s;
 }
 
 #map-editor * {

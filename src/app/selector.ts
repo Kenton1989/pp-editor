@@ -2,7 +2,11 @@ import Color from "color";
 import { useMemo } from "react";
 import { Cell } from "../models/edit-level/cell";
 import { HslColor, toHslArr } from "../models/edit-level/color";
-import { BlockState, LevelState } from "../models/edit-level/state";
+import {
+  BlockState,
+  HeaderState,
+  LevelState,
+} from "../models/edit-level/state";
 import { Brush } from "../models/edit-ui/brush";
 import { useAppSelector } from "./hook";
 import { RootState } from "./store";
@@ -45,6 +49,10 @@ export function useCurrentBlkColor(): Color {
 export function useBlock(id: number): BlockState | undefined {
   let blkMap = useBlockMap();
   return blkMap.get(id);
+}
+
+export function useHeader(): HeaderState {
+  return useAppSelector((state) => state.level.present.header);
 }
 
 export function useBlockColor(blk: BlockState | undefined): Color {

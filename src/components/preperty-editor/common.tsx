@@ -77,6 +77,19 @@ export function TextProp(
   );
 }
 
+export function SelectProp<ValueT extends number | string>(
+  props: {
+    label: string;
+  } & SelectProps<ValueT>
+) {
+  let { label, ...other } = props;
+  return (
+    <PropRow label={label}>
+      <Select size="small" {...other} />
+    </PropRow>
+  );
+}
+
 export function BlockIdProp(
   props: {
     label: string;

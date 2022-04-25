@@ -12,9 +12,10 @@
   align-items: center;
 }
 
-main {
+#main-div {
   display: flex;
   align-items: stretch;
+  position: relative;
 }
 
 #property-editor {
@@ -27,4 +28,10 @@ main {
 
 #map-editor {
   width: 60vw;
+}
+
+#header-editor-entry {
+  position: absolute;
+  top: 10px;
+  left: 10px;
 }

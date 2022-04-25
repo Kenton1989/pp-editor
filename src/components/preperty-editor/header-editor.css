@@ -1,0 +1,16 @@
+#header-editor-entry {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+#header-editor {
+  min-width: 25em;
+}
+
+#header-editor .property-row {
+  border-bottom: 1px solid lightgray;
+  padding: 8px 4px;
+}
+
+#header-editor .ant-select {
+  width: 100%;
+}

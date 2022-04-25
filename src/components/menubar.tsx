@@ -64,7 +64,7 @@ export default function MenuBar(props: MenuProps) {
           Keyboard Shortcuts
         </Menu.Item>
         <Menu.Item onClick={() => {}} key="json-txt-file">
-          Save .json or Save .txt?
+          Save .json vs. Save .txt?
         </Menu.Item>
         <Menu.Item key="load-level">
           <BlankA href="https://www.patricksparabox.com/custom-levels/#load">

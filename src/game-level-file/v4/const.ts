@@ -20,34 +20,33 @@ const APPENDIX_PRIORITY_ATTEMPT_ORDER: AttemptOrder = [
 
 const ATTEMPT_NAMES = new Set(DEFAULT_ATTEMPT_ORDER);
 
-interface MusicInfo {
+export interface MusicInfo {
   id: number;
   name: string;
 }
 
-const MUSICS: MusicInfo[] = [
-  { id: 0, name: "intro" },
-  { id: 1, name: "enter" },
-  { id: 2, name: "empty" },
-  { id: 3, name: "eat" },
-  { id: 4, name: "reference" },
-  { id: 5, name: "swap" },
-  { id: 6, name: "center" },
-  { id: 7, name: "clone" },
-  { id: 8, name: "transfer" },
-  { id: 9, name: "open" },
-  { id: 10, name: "flip" },
-  { id: 11, name: "cycle" },
-  { id: 12, name: "player" },
-  { id: 13, name: "possess" },
-  { id: 14, name: "wall" },
-  { id: 15, name: "infinite exit" },
-  { id: 16, name: "infinite enter" },
-  { id: 17, name: "multi infinite" },
-  { id: 18, name: "reception" },
-  { id: 19, name: "appendix" },
-  { id: 20, name: "menu" },
-  { id: 21, name: "credit" },
+export const MUSICS: MusicInfo[] = [
+  { id: 0, name: "Intro" },
+  { id: 1, name: "Enter" },
+  { id: 2, name: "Empty" },
+  { id: 3, name: "Reference" },
+  { id: 5, name: "Swap" },
+  { id: 6, name: "Center" },
+  { id: 7, name: "Clone" },
+  { id: 8, name: "Transfer" },
+  { id: 9, name: "Open" },
+  { id: 10, name: "Flip" },
+  { id: 11, name: "Cycle" },
+  { id: 12, name: "Player" },
+  { id: 13, name: "Possess" },
+  { id: 14, name: "Wall" },
+  { id: 15, name: "Infinite Exit" },
+  { id: 16, name: "Infinite Enter" },
+  { id: 17, name: "Multi Infinite" },
+  { id: 18, name: "Reception" },
+  { id: 19, name: "Appendix" },
+  { id: 20, name: "Menu" },
+  { id: 21, name: "Credit" },
 ];
 
 function getMusic(id: number): MusicInfo {

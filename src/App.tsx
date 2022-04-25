@@ -1,29 +1,30 @@
-import React, { useCallback, useState } from "react";
-import { Layout, Menu, PageHeader } from "antd";
+import { Layout } from "antd";
 import MenuBar from "./components/menubar";
 import MapEditor from "./components/map-editor";
 import BrushMenu from "./components/brush-menu";
 import PropertyEditor from "./components/preperty-editor";
 
 import "./App.css";
+import { useRef } from "react";
+import { HeaderEditorEntry } from "./components/preperty-editor";
 
-const { SubMenu } = Menu;
-
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Content } = Layout;
 
 function App() {
-  // const [text, setText] = useState("");
+  let mainDivRef = useRef<HTMLElement>(null);
+
   return (
     <>
       <Layout className="stretch-height">
         <Header>
           <div className="main-logo">
             <img src="/logo192.png" alt="logo" />
-            <span>Kanton's Parabox Editor</span>
+            <span>Patrick's Parabox Editor</span>
           </div>
           <MenuBar />
         </Header>
-        <Content className="main-div">
+        <Content id="main-div" ref={mainDivRef}>
+          <HeaderEditorEntry />
           <MapEditor />
           <BrushMenu />
           <PropertyEditor />

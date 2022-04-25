@@ -123,6 +123,7 @@ function AttemptOrderProp(props: {
               }
             }}
             onChange={(e) => updateTxt(e.target.value)}
+            placeholder="enter attempt order"
             size="small"
           />
         </Space>
@@ -152,11 +153,11 @@ const ATTEMPT_ORDER_OPTIONS = [
 
 const MUSIC_OPTIONS = [
   {
-    label: "No Music",
+    label: "-1: No Music",
     value: -1,
   },
   ...MUSICS.map((m) => ({
-    label: m.name,
+    label: `${m.id}: ${m.name}`,
     value: m.id,
   })),
 ];

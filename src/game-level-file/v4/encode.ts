@@ -16,8 +16,8 @@ const ENCODE_HEADER_LINES: [keyof RawLevelHeader, (arg: any) => string][] = [
         ? ""
         : `attempt_order ${attemptOrder.join(",")}\n`,
   ],
-  ["shed", (shed) => (shed ? "shed\n" : "")],
-  ["innerPush", (innerPush) => (innerPush ? "inner_push\n" : "")],
+  ["shed", (shed) => (shed ? "shed 1\n" : "")],
+  ["innerPush", (innerPush) => (innerPush ? "inner_push 1\n" : "")],
   [
     "drawStyle",
     (drawStyle) => (drawStyle === "" ? "" : `draw_style ${drawStyle}\n`),

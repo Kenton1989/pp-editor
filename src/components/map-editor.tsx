@@ -106,9 +106,11 @@ function MapCell(props: PropsWithChildren<{ x: number; y: number }>) {
     accept: ItemTypes.BLOCK,
     drop: ({ x: srcX, y: srcY }) => {
       if (srcX === undefined || srcY === undefined) return;
+      if (srcX === x && srcY === y) return;
       dispatch(
         LEVEL.moveCell({ blkId: curBlk.id, from: [srcX, srcY], to: [x, y] })
       );
+      dispatch(UI.selectCell([x, y]));
     },
     collect: (monitor) => {
       let src = monitor.getItem();

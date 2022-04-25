@@ -32,7 +32,7 @@ Official Customized Level Manual: [link](https://www.patricksparabox.com/custom-
 
 ## Q&A
 
-### <a name="save-json-vs-save-txt"></a>Save .json vs. Save .txt
+### Save .json vs. Save .txt
 
 - save as .txt file
   - .txt level file is the file use by Patrick's Parabox.

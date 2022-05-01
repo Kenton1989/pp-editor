@@ -6,7 +6,11 @@ import { ActionCreators } from "redux-undo";
 import { useAppSelector } from "../app/hook";
 import { inputLevelFile, outputLevelFile } from "../game-level-file";
 import { LEVEL } from "../models/edit-level";
-import { exportLevelState, importLevelState } from "../models/edit-level/io";
+import {
+  exportLevelState,
+  importLevelState,
+  loadLevelStateFromJson,
+} from "../models/edit-level/io";
 import levelStateSchema from "../models/edit-level/level-state-schema";
 import { LevelState } from "../models/edit-level/state";
 import { inputTxtFile, outputTxtFile } from "../text-io";
@@ -185,18 +189,10 @@ function useActionHandler(): (name: string) => any {
   return cb;
 }
 
-let ajv = new Ajv();
-let levelStateValidate = ajv.compile(levelStateSchema);
-
 async function openLevelStateFile(): Promise<LevelState | undefined> {
   try {
     let [s] = await inputTxtFile("application/json", MAX_FILE_SIZE);
-    let state: any = undefined;
-    state = JSON.parse(s);
-    if (!levelStateValidate(state)) {
-      message.error("invalid file format");
-    }
-    return state as LevelState;
+    return loadLevelStateFromJson(s);
   } catch (e) {
     console.error(e);
     message.error("invalid file format");

@@ -162,7 +162,7 @@ export const levelStateSchema = {
               $ref: "#/definitions/Cell",
             },
             {
-              not: {},
+              type: "null",
             },
           ],
         },

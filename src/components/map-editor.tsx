@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useState } from "react";
+import React, { PropsWithChildren, useEffect, useState } from "react";
 import {
   useBlockColor,
   useBrush,
@@ -125,6 +125,9 @@ function MapCell(props: PropsWithChildren<{ x: number; y: number }>) {
     },
   });
 
+  // cancel hover effect whenever the brush change
+  useEffect(() => setHover(false), [brush]);
+
   let brushPreview: JSX.Element = <></>;
   let draggingPreview: JSX.Element = <></>;
   let onClick = () => {};
@@ -221,10 +224,12 @@ function useOnBlockCellClick(
     case "Select":
       return () => dispatch(UI.selectCell([cell.x, cell.y]));
     case "Erase":
-      return () =>
+      return () => {
         dispatch(
           LEVEL.removeCell({ blkId: parentBlk.id, pos: [cell.x, cell.y] })
         );
+        dispatch(UI.selectCell(undefined));
+      };
     default:
       return undefined;
   }

@@ -9,6 +9,20 @@ import {
   WallCell,
 } from "./cell";
 import { fromRawColor, toRawLevelColor } from "./color";
+import Ajv from "ajv";
+import levelStateSchema from "./level-state-schema";
+
+let ajv = new Ajv();
+let levelStateValidate = ajv.compile(levelStateSchema);
+
+export function loadLevelStateFromJson(jsonStr: string): LevelState {
+  const obj = JSON.parse(jsonStr)
+  const res = levelStateValidate(obj)
+  if (!res) {
+    throw new TypeError(`invalid level state format ${res}`);
+  }
+  return obj as LevelState
+}
 
 export function importLevelState(
   level: LevelRoot,
